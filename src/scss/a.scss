@@ -1,0 +1,23 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+header {
+    height: 2em;
+}
+main {
+    height: calc(100% - 2em);
+
+    #sheet {
+        height: calc(100% - 100px - 2em);
+    }
+    #keyboard {
+        height: 100px;
+    }
+    #control_panel {
+        height: 4em;
+    }
+}
+div { background: pink; }
+
