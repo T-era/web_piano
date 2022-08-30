@@ -76,13 +76,11 @@ export default function Overall() :ReactElement {
             </div>
             <div className='controlpanel'>
                 <ControlPanel
-                    selectedInstrumentName={instrumentNameState.value}
+                    selectedInstrumentNameState={instrumentNameState}
+                    beatSpeedState={beatSpeedState}
                     playSuspender={playSuspenderState.value}
-                    beatSpeed={beatSpeedState.value}
-                    onSelectedInstrumentNameChanging={instrumentNameState.set}
                     onPlayAll={soundModel.playAll.bind(soundModel)}
                     onPlayBelow={soundModel.playBelow.bind(soundModel)}
-                    onBeatSpeedChanging={(value :number) => beatSpeedState.set(value)}
                     saveDataTitles={lsio.fileNames}
                     onLoading={(loadingTitle)=>ioModel.load(loadingTitle)}
                     onSaving={()=>{ioModel.save()}}

@@ -20,7 +20,7 @@ html, body {
                 position: absolute;
                 bottom: 200px;
                 min-width: 1200px;
-                max-height: calc(100% - 200px - 15px);
+                max-height: min(calc(100% - 200px - 15px), 500px);  // 分割管理のための上限500px
                 overflow-y: scroll
             }
             .keyboard {

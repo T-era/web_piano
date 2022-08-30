@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { scoreSheetRowHeight, scoreSideButtonWidth } from '../base';
 
 const arrow_width = scoreSideButtonWidth - 2;
@@ -12,12 +13,13 @@ interface CRMProps {
     onClick :()=>void;
 }
 export default function CurrentRowMark({isSelectedRow, y, onClick} :CRMProps) {
-    return (
+    const memoResult = useMemo(() => (
         <>
             <rect x={21} y={y+1} width={scoreSideButtonWidth-2} height={scoreSheetRowHeight-2} onClick={onClick} className='background' />
             { isSelectedRow
                 && <path className="is_selected" onClick={onClick} width={scoreSideButtonWidth} height={scoreSheetRowHeight}
                     d={`M${scoreSideButtonWidth + 1} ${y + scoreSheetRowHeight / 2 - arrow_hor_height} l${arrow_hor_width} 0, 0 ${-(arrow_head_height-arrow_hor_height)}, ${arrow_head_width} ${arrow_head_height}, ${-arrow_head_width} ${arrow_head_height}, 0 ${-(arrow_head_height-arrow_hor_height)}, ${-arrow_hor_width} 0Z`} /> }
         </>
-    )
+    ), [isSelectedRow]);
+    return memoResult;
 }

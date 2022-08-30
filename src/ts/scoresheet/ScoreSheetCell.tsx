@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { keyboardShiftWidth, scoreButtonWidth, ScoreItem, scoreSheetRowHeight } from '../base';
 
 import './ScoreSheetCell.scss';
@@ -35,8 +36,8 @@ export default function ScoreSheetCell({scoreContents, levelAt, rowAt, onClick} 
         ? 'empty'
         : 'fill';
     const distance = seekDistanceFromStart(scoreContents, levelAt, rowAt);
-    const isContinueItem = itemAt === ScoreItem.Continue
-    return (
+    const isContinueItem = itemAt === ScoreItem.Continue;
+    const memoResult = useMemo(() => (
         <>
             <rect
                 x={keyboardShiftWidth + scoreButtonWidth * levelAt + 1}
@@ -50,5 +51,7 @@ export default function ScoreSheetCell({scoreContents, levelAt, rowAt, onClick} 
                 ? <path d={`M${keyboardShiftWidth + (levelAt+0.5) * scoreButtonWidth} ${rowAt * scoreSheetRowHeight - 5}
                     l 0 10`} stroke='blue' />
                 : undefined }
-        </>);
+        </>
+    ), [itemAt, isContinueItem]);
+    return memoResult;
 }

@@ -1,3 +1,4 @@
+import { State } from "../base";
 import { PlaySuspender } from "../viewmodels/SpeakerModel";
 import BeatSpeed from "./BeatSpeed";
 import InstrumentSelect from "./InstrumentSelect";
@@ -5,33 +6,30 @@ import IO from "./io/IO";
 import PlayAll from "./PlayAll";
 
 interface Props {
-    selectedInstrumentName :string;
+    selectedInstrumentNameState :State<string>;
+    beatSpeedState :State<number>;
     playSuspender :PlaySuspender|null;
-    beatSpeed :number;
     saveDataTitles :string[];
-    onSelectedInstrumentNameChanging :(newValue :string)=>void;
     onPlayAll :()=>void;
     onPlayBelow :()=>void;
-    onBeatSpeedChanging :(value :number)=>void;
     onSaving :()=>void;
     onLoading :(title :string)=>void;
 }
 export default function ControlPanel(props :Props) {
     const {
-        selectedInstrumentName, onSelectedInstrumentNameChanging,
-        beatSpeed, onBeatSpeedChanging,
+        selectedInstrumentNameState,
+        beatSpeedState,
         playSuspender, onPlayAll, onPlayBelow, 
         saveDataTitles, onSaving, onLoading,
     } = props;
     return (
         <>
             <InstrumentSelect
-                selectedInstrumentName={selectedInstrumentName}
-                onSelectedInstrumentNameChanging={onSelectedInstrumentNameChanging}
+                selectedInstrumentNameState={selectedInstrumentNameState}
                 />
             <BeatSpeed
-                beatSpeed={beatSpeed}
-                onChanging={onBeatSpeedChanging} />
+                beatSpeedState={beatSpeedState}
+                />
             <PlayAll
                 onPlayAll={onPlayAll}
                 onPlayBelow={onPlayBelow}

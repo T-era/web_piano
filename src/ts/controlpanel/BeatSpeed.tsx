@@ -1,19 +1,21 @@
+import { State } from "../base";
+
 interface Props {
-    beatSpeed :number
-    onChanging :(beatSpeed :number)=>void;
+    beatSpeedState :State<number>;
 }
-export default function BeatSpeed({beatSpeed, onChanging} :Props) {
+export default function BeatSpeed({beatSpeedState} :Props) {
+    const { value, set } = beatSpeedState;
     return (
         <input type='number'
             min={0}
             step={0.1}
-            value={beatSpeed}
+            value={value}
             onChange={(e) => {
                 const value  = e.target.valueAsNumber;
                 if (value === 0 || value !== value) {
                     return false;
                 } else {
-                    onChanging(value)
+                    set(value)
                 }
             }}
         />

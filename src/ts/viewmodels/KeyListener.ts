@@ -1,5 +1,5 @@
 import { KeyboardEvent } from "react";
-import { deepCopy } from "../ArrayUtil";
+import { replaceAt } from "../ArrayUtil";
 import { KeyboardToneShift, ScoreItem, SelectedRow, State } from "../base"
 import { Model, newScoreRow } from "./OverallModel";
 
@@ -80,14 +80,14 @@ export class KeyListener {
             const targetRowNum = e.shiftKey ? selectedScoreRow : selectedScoreRow + 1;
 
             if (originRowNum < 0) return;
-            const copied = (targetRowNum >= scoreContents.length)
+            let modified = (targetRowNum >= scoreContents.length)
                 ? scoreContents.concat([newScoreRow()])
-                : deepCopy(scoreContents);
+                : scoreContents;
             scoreContents[originRowNum].forEach((item, x) => {
                 if (item === ScoreItem.None) return;
-                else copied[targetRowNum][x] = ScoreItem.Continue;
+                else modified = replaceAt(modified, x, targetRowNum, ScoreItem.Continue);
             })
-            setScoreContents(copied);
+            setScoreContents(modified);
         }
     }
 }

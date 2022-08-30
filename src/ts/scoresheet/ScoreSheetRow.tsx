@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { levelsFromScores, octaveWidth, scoreButtonWidth, ScoreItem, scoreSheetRowHeight } from '../base';
 import CurrentRowMark from './CurrentRowMark';
 import NoteMark from './NoteMark';
@@ -15,7 +16,7 @@ interface Props {
 }
 export default function ScoreSheetRow({scoreContents, rowAt, isSelectedRow, onRowSelected, onPlayingChord, onPutASoundAt} :Props) {
     const lineAt = scoreContents[rowAt];
-    return (
+    const memoResult = useMemo(() => (
         <g>
             <rect x={0} y={rowAt * scoreSheetRowHeight}
                 width={scoreButtonWidth * 2+octaveWidth*4}
@@ -35,5 +36,6 @@ export default function ScoreSheetRow({scoreContents, rowAt, isSelectedRow, onRo
                     onClick={() => onPutASoundAt(rowAt, x)} />
             )}
         </g>
-    );
+    ), [lineAt, isSelectedRow]);
+    return memoResult;
 }

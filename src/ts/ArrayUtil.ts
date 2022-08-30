@@ -5,11 +5,20 @@ export function flatten<T>(dArray :T[][]) :T[] {
     }
     return res;
 }
+
+// 非破壊変更でリストの一要素を変えます。変更点以外は、極力元のリストを使います
 export function replaceAt<T>(dArray :T[][], x :number, y :number, newValue :T) :T[][] {
-    const ret = deepCopy(dArray);
-    ret[y][x] = newValue;
-    return ret;
-}
-export function deepCopy<T>(dArray :T[][]) :T[][] {
-    return dArray.map((l) => l.slice()).slice();
+    return dArray.map((row, _y) => {
+        if (y === _y) {
+            return row.map((item, _x) => {
+                if (x === _x) {
+                    return newValue;
+                } else {
+                    return item;
+                }
+            })
+        } else {
+            return row;
+        }
+    });
 }
