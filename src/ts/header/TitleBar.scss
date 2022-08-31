@@ -1,6 +1,19 @@
 div.title_bar {
     text-align: center;
+    font-size: large;
     .title_plate {
+        margin: 0.2em;
         width: 20em;
+        border-style: solid;
+        &:read-only {
+            border-color: white;
+        }
+    }
+    label {
+        display: inline-block;
+        svg {
+            width: 1em;
+            height: 1em;
+        }
     }
 }

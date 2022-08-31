@@ -1,0 +1,13 @@
+.control_panel .menuitem {
+    &.play_controll {
+        width: unset;
+        display: inline-block;
+        background: #fee;
+        ul.play_buttons {
+            display: inline-block;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+    }
+}

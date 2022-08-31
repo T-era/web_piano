@@ -1,4 +1,4 @@
-import { makeASound, playAllMelody, ScoreItem, SelectedRow, State } from "../base"
+import { makeASound, playAllMelody, ScoreItem, scoreSheetRowHeight, SelectedRow, State } from "../base"
 import { all } from "../sound/instruments";
 
 export class PlaySuspender {
@@ -52,6 +52,23 @@ export class SpeakerModel {
         const beatSpeed = this.beatSpeed;
         const scoreBelow = scoreContents.slice(selectedScoreRow);
         let fSuspend = playAllMelody(all[instrumentName], scoreBelow, beatSpeed, () => {
+            setPlaySuspender(null);
+        });
+        setPlaySuspender(new PlaySuspender(fSuspend));
+    }
+    playScope() {
+        const instrumentName = this.instrumentName;
+        const scoreContents = this.scoreContents;
+        const { set: setPlaySuspender } = this.playSuspenderState;
+        const beatSpeed = this.beatSpeed;
+
+        const sheetDom = document.getElementsByClassName('sheet')[0];
+        const top = sheetDom.scrollTop;
+        const bottom = top + sheetDom.clientHeight;
+        const rowStart = Math.floor(top / scoreSheetRowHeight);
+        const rowEnd = Math.ceil(bottom / scoreSheetRowHeight);
+        const scoreRange = scoreContents.slice(rowStart, rowEnd);
+        let fSuspend = playAllMelody(all[instrumentName], scoreRange, beatSpeed, () => {
             setPlaySuspender(null);
         });
         setPlaySuspender(new PlaySuspender(fSuspend));

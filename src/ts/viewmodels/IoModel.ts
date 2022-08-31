@@ -1,5 +1,6 @@
 import { atomsFromScores, ScoreItem, scoresFromMelody, State } from "../base"
 import lsio from "../io/LocalStorageIo";
+import { SaveData } from "../io/util";
 
 export class IoModel {
     private readonly title :State<string>;
@@ -19,31 +20,38 @@ export class IoModel {
         this.instrumentName = instrumentName;
         this.beatSpeed = beatSpeed;
     }
-    save() {
+    save() :void {
         const { value: title } = this.title;
-        const { value: scoreContents } = this.scoreContents;
-        const { value: instrumentName } = this.instrumentName;
-        const { value: beatSpeed } = this.beatSpeed;
         const { set: setSaveDataTitles } = this.saveDataTitles;
-        lsio.save(title, {
-            melody: atomsFromScores(scoreContents),
-            instrumentName: instrumentName,
-            beatSpeed: beatSpeed,
-        });
+
+        lsio.save(title, this.export());
         setSaveDataTitles(lsio.fileNames);
     }
     load(title :string) {
         const { set: setTitle } = this.title;
-        const { set: setScoreContents } = this.scoreContents;
-        const { set: setInstrumentName } = this.instrumentName;
-        const { set: setBeatSpeed } = this.beatSpeed;
 
         const loadedData = lsio.load(title);
         if (loadedData !== null) {
             setTitle(title);
-            setScoreContents(scoresFromMelody(loadedData.melody));
-            setInstrumentName(loadedData.instrumentName);
-            setBeatSpeed(loadedData.beatSpeed);
+            this.import(loadedData);
         }
+    }
+    export() :SaveData {
+        const { value: scoreContents } = this.scoreContents;
+        const { value: instrumentName } = this.instrumentName;
+        const { value: beatSpeed } = this.beatSpeed;
+        return {
+            melody: atomsFromScores(scoreContents),
+            instrumentName: instrumentName,
+            beatSpeed: beatSpeed,
+        }
+    }
+    import(saveData :SaveData) :void {
+        const { set: setScoreContents } = this.scoreContents;
+        const { set: setInstrumentName } = this.instrumentName;
+        const { set: setBeatSpeed } = this.beatSpeed;
+        setScoreContents(scoresFromMelody(saveData.melody));
+        setInstrumentName(saveData.instrumentName);
+        setBeatSpeed(saveData.beatSpeed);
     }
 }

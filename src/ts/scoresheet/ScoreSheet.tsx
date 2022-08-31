@@ -1,4 +1,4 @@
-import { keyboardShiftWidth, octaveWidth, scoreButtonWidth, ScoreItem, scoreSheetRowHeight } from '../base';
+import { keyboardShiftWidth, octaveWidth, scoreButtonWidth, ScoreItem, scoreSheetRowHeight, scoreSideButtonWidth } from '../base';
 
 import './ScoreSheet.scss';
 import ScoreSheetRow from './ScoreSheetRow';

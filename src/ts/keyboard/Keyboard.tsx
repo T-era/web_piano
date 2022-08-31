@@ -13,9 +13,10 @@ export default function Keyboard(props :Props) {
     const onSoundClicked = (level :number) => {
         props.onPutASound(level);
     }
+    const width = keyboardShiftWidth * 2 + octaveWidth * 4;
     function s(level :number|null, length :number) { return {level, length}; }
     return (<>
-        <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 200'>
+        <svg xmlns='http://www.w3.org/2000/svg' viewBox={`0 0 ${width} 200`} style={{width}}>
             <ButtonTone shortcutKey='a' x={0} size={keyboardShiftWidth} direction={Direction.toDown}
                 onClick={() => props.onToneChanging(false)} />
             <Octave dx={keyboardShiftWidth} dTone={0} isKeyinActive={props.kts === KeyboardToneShift.a} onClicked={onSoundClicked}/>

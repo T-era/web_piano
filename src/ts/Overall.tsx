@@ -11,16 +11,18 @@ import { KeyboardToneShift, scoreSheetRowHeight, wrap } from './base';
 import { Model, newScoreRow, KeyListener, IoModel, SpeakerModel, PlaySuspender } from './viewmodels';
 
 import './Overall.scss'
+import { SaveData } from './io/util';
 
 
 export default function Overall() :ReactElement {
+    const tilteUndefined = lsio.autoNaming();
     let ktsState = wrap(useState(KeyboardToneShift.b));
     let scoreContentsState = wrap(useState([newScoreRow()]));
     let selectedScoreRowState = wrap(useState({ row: 0, forceFocus: true }));
     let instrumentNameState = wrap(useState(organ.title));
     let playSuspenderState = wrap(useState(null as PlaySuspender|null));
     let beatSpeedState = wrap(useState(0.2));
-    let titleState = wrap(useState('未定義'));
+    let titleState = wrap(useState(tilteUndefined));
     let saveDataTitlesState = wrap(useState(lsio.fileNames));
 
     let scoreSheetRef = createRef<HTMLDivElement>();
@@ -74,16 +76,19 @@ export default function Overall() :ReactElement {
                         onPutASound={model.putASound.bind(model)}/>
                 </div>
             </div>
-            <div className='controlpanel'>
+            <div className='control_panel'>
                 <ControlPanel
                     selectedInstrumentNameState={instrumentNameState}
                     beatSpeedState={beatSpeedState}
                     playSuspender={playSuspenderState.value}
+                    saveData={ioModel.export()}
                     onPlayAll={soundModel.playAll.bind(soundModel)}
                     onPlayBelow={soundModel.playBelow.bind(soundModel)}
+                    onPlayScope={soundModel.playScope.bind(soundModel)}
                     saveDataTitles={lsio.fileNames}
                     onLoading={(loadingTitle)=>ioModel.load(loadingTitle)}
                     onSaving={()=>{ioModel.save()}}
+                    setSaveData={(saveData :SaveData) => ioModel.import(saveData)}
                     />
             </div>
         </main>

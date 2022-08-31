@@ -1,15 +1,13 @@
 import { Atom } from "../sound/Player";
+import { exportToJson, importFromJson } from "./Text";
+import { SaveData } from "./util";
 
 // ストレージのキーとして使う際のプレフィックス。
 const localStorageFileContents = 'PIANO.SAVE.';
 // ストレージ内のファイルの一覧を管理するための、ストレージキー。 (値としては、上のプレフィックスがない状態で持っている)
 const localStorageFileList = 'PIANO.SAVE';
 
-export interface SaveData {
-    beatSpeed :number;
-    instrumentName :string;
-    melody :Atom[];
-}
+
 
 export class LocalStorageIO {
     fileNames :string[];
@@ -30,7 +28,7 @@ export class LocalStorageIO {
             this.fileNames.push(name);
             localStorage.setItem(localStorageFileList, JSON.stringify(this.fileNames));
         }
-        const jsonData = JSON.stringify(data);
+        const jsonData = exportToJson(data);
         localStorage.setItem(nameInStorage(name), jsonData);
     }
     load(name :string) :SaveData|null {
@@ -39,7 +37,7 @@ export class LocalStorageIO {
         }
         const jsonData = localStorage.getItem(nameInStorage(name));
         if (jsonData === null) return null;
-        return JSON.parse(jsonData) as SaveData;
+        return importFromJson(jsonData);
     }
     ensureEexistsFile(name :string) :boolean {
         return this.fileNames.indexOf(name) !== -1;
