@@ -1,19 +1,26 @@
-.control_panel .menu {
-    display: grid;
-    grid-template-columns: 20% 40% 20% 20%;
-    flex-direction: row;
+.control_panel .control_panel_grid {
     height: 100%;
-    .beatspeed {
-        vertical-align: bottom;
-        input {
-            display: block;
-        }
-    }
-    .menuitem {
-        width: 80%;
+    margin: auto;
+    display: flex;
+    flex-direction: row;
+    grid-template-columns: 60% 40%;
+    .menu {
+        display: grid;
+        grid-template-columns: 20% 40% 20% 20%;
+        flex-direction: row;
         height: 100%;
-        margin: 0 20px;
-        border-radius: 10px;
-        background: pink;
+        .beatspeed {
+            vertical-align: bottom;
+            input {
+                display: block;
+            }
+        }
+        .menuitem {
+            width: 80%;
+            height: 100%;
+            margin: 0 20px;
+            border-radius: 10px;
+            background: #ffeee6;
+        }
     }
 }

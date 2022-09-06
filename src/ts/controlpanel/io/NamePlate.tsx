@@ -1,14 +1,15 @@
 import { useMemo, useState } from "react";
-import { State } from "../base";
-import './TitleBar.scss';
+import { State } from "../../base";
+import './NamePlate.scss';
 
 interface Props {
     titleState :State<string>;
 }
-export default function TitleBar({titleState} :Props) {
+export default function NamePlate({titleState} :Props) {
     const { value: title, set: setTitle } = titleState;
-    let [isReadOnly, setReadOnly] = useState(true);
+    const [isReadOnly, setReadOnly] = useState(true);
 
+    const titleToShow = isReadOnly ? `${title.substring(0,4)}${title.length > 4 ? '...' : ''}` : title;
     const onClick = () => {
         setReadOnly(false);
     }
@@ -16,13 +17,13 @@ export default function TitleBar({titleState} :Props) {
         setReadOnly(true);
     }
     return (
-        <div className='title_bar'>
+        <div className='name_plate'>
             <label htmlFor='title_input' onClick={onClick}>
                 <svg xmlns='http://www.w3.org/2000/svg' viewBox="0 0 32 32">
                     <PencilIcon />
                 </svg>
             </label>
-            <input id='title_input' type="text" readOnly={isReadOnly} value={title}
+            <input id='title_input' type="text" readOnly={isReadOnly} value={titleToShow}
                 className='title_plate'
                 onBlur={onFocusOut}
                 onChange={(e) => setTitle(e.target.value)}

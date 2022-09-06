@@ -1,20 +1,24 @@
 import { KeyboardEvent } from "react";
 import { replaceAt } from "../ArrayUtil";
-import { KeyboardToneShift, ScoreItem, SelectedRow, State } from "../base"
-import { Model, newScoreRow } from "./OverallModel";
+import { KeyboardToneShift, newScoreRow, ScoreItem, SelectedRow, State } from "../base"
+import { Model } from "./OverallModel";
+import { ScoreModel } from "./ScoreModel";
 
 export class KeyListener {
     private readonly scoreContentsState :State<ScoreItem[][]>;
     private readonly model :Model;
+    private readonly scoreModel :ScoreModel;
     private readonly kts :KeyboardToneShift;
     private readonly selectedScoreRow :SelectedRow;
 
     constructor(
         model :Model,
+        scoreModel :ScoreModel,
         scoreContents :State<ScoreItem[][]>,
         kts :KeyboardToneShift,
         selectedScoreRow :SelectedRow) {
         this.model = model;
+        this.scoreModel = scoreModel;
         this.kts = kts;
         this.scoreContentsState = scoreContents;
         this.selectedScoreRow = selectedScoreRow;
@@ -58,18 +62,18 @@ export class KeyListener {
             case 'a': this.model.onToneChanging(false); return;
             case 'l': this.model.onToneChanging(true); return;
 
-            case 's': this.model.putASound(kts * 12 + 0); return;
-            case 'e': this.model.putASound(kts * 12 + 1); return;
-            case 'd': this.model.putASound(kts * 12 + 2); return;
-            case 'r': this.model.putASound(kts * 12 + 3); return;
-            case 'f': this.model.putASound(kts * 12 + 4); return;
-            case 'g': this.model.putASound(kts * 12 + 5); return;
-            case 'y': this.model.putASound(kts * 12 + 6); return;
-            case 'h': this.model.putASound(kts * 12 + 7); return;
-            case 'u': this.model.putASound(kts * 12 + 8); return;
-            case 'j': this.model.putASound(kts * 12 + 9); return;
-            case 'i': this.model.putASound(kts * 12 + 10); return;
-            case 'k': this.model.putASound(kts * 12 + 11); return;
+            case 's': this.scoreModel.putASound(kts * 12 + 0); return;
+            case 'e': this.scoreModel.putASound(kts * 12 + 1); return;
+            case 'd': this.scoreModel.putASound(kts * 12 + 2); return;
+            case 'r': this.scoreModel.putASound(kts * 12 + 3); return;
+            case 'f': this.scoreModel.putASound(kts * 12 + 4); return;
+            case 'g': this.scoreModel.putASound(kts * 12 + 5); return;
+            case 'y': this.scoreModel.putASound(kts * 12 + 6); return;
+            case 'h': this.scoreModel.putASound(kts * 12 + 7); return;
+            case 'u': this.scoreModel.putASound(kts * 12 + 8); return;
+            case 'j': this.scoreModel.putASound(kts * 12 + 9); return;
+            case 'i': this.scoreModel.putASound(kts * 12 + 10); return;
+            case 'k': this.scoreModel.putASound(kts * 12 + 11); return;
         }
     }
     private _keyboardEventHandlerSpace(e :KeyboardEvent) :void {

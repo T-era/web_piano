@@ -1,7 +1,9 @@
 import { useState } from "react";
 import Modal from 'react-modal';
 import { wrap } from "../../base";
-import MenuDetail from "../../components/MenuDetail";
+import MenuDetail from "../../components/WithToolTip";
+import { IoModel } from "../../viewmodels";
+import { LoadIcon } from "./IOIcons";
 
 import './LoadDialog.scss';
 
@@ -9,22 +11,22 @@ Modal.setAppElement('#root');
 
 interface Props {
     saveDataTitles :string[];
-    onLoading :(title :string)=>void;
+    ioModel :IoModel;
 }
 const overlayStyle = {
     background: 'rgba(64, 64, 64, .5)',
 }
-export default function Load({ saveDataTitles, onLoading } :Props) {
+export default function Load({ saveDataTitles, ioModel } :Props) {
     const modalIsOpenState = wrap(useState(false));
     const [selectedTitle, setSelectedTitle] = useState(saveDataTitles[0])
     const close = (isSelected :boolean) => {
         if (isSelected) {
-            onLoading(selectedTitle);
+            ioModel.load(selectedTitle);
         }
         modalIsOpenState.set(false);
     }
     return (
-        <MenuDetail menu="Load" modalIsOpenState={modalIsOpenState}>
+        <MenuDetail toolTipLabel={<LoadIcon/>} modalIsOpenState={modalIsOpenState}>
             <FileSelect saveDataTitles={saveDataTitles} onSelectChanged={setSelectedTitle}/>
             <button onClick={()=>close(true)}>OK</button>
             <button onClick={()=>close(false)}>Cancel</button>

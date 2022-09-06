@@ -1,4 +1,5 @@
-div.title_bar {
+div.name_plate {
+    display: inline;
     text-align: center;
     font-size: large;
     .title_plate {
@@ -7,13 +8,16 @@ div.title_bar {
         border-style: solid;
         &:read-only {
             border-color: white;
+            width: 5em;
         }
     }
     label {
-        display: inline-block;
+        vertical-align: bottom;
         svg {
             width: 1em;
             height: 1em;
+            display: inline;
+            cursor: pointer;
         }
     }
 }

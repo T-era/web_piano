@@ -1,6 +1,5 @@
 import Player, { Atom } from "./sound/Player";
 import { Instrument } from "./sound/instruments";
-import { newScoreRow } from "./viewmodels/OverallModel";
 import { Dispatch, SetStateAction } from "react";
 
 export const keyboardShiftWidth = 40;
@@ -23,8 +22,8 @@ export enum KeyboardToneShift {
     d = 3
 }
 export interface State<T> {
-    value :T;
-    set :Dispatch<SetStateAction<T>>;
+    readonly value :T;
+    readonly set :Dispatch<SetStateAction<T>>;
 }
 
 export function wrap<T>([value, set] : [T, Dispatch<SetStateAction<T>>]) :State<T> {
@@ -88,4 +87,12 @@ export function scoresFromMelody(melody :Atom[]) :ScoreItem[][] {
 export interface SelectedRow {
     row :number;
     forceFocus :boolean;
+}
+
+export function newScoreRow() {
+    const ret :ScoreItem[] = [];
+    for (let i = 0; i < 12 * 4; i ++) {
+        ret.push(ScoreItem.None);
+    }
+    return ret;
 }

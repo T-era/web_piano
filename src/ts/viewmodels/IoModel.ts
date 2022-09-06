@@ -3,7 +3,7 @@ import lsio from "../io/LocalStorageIo";
 import { SaveData } from "../io/util";
 
 export class IoModel {
-    private readonly title :State<string>;
+    readonly title :State<string>;
     private readonly saveDataTitles :State<string[]>
     private readonly scoreContents :State<ScoreItem[][]>;
     private readonly instrumentName :State<string>;

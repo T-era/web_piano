@@ -1,55 +1,51 @@
 import { State } from "../base";
-import { SaveData } from "../io/util";
-import { PlaySuspender } from "../viewmodels/SpeakerModel";
+import { PlaySuspender, SpeakerModel } from "../viewmodels/SpeakerModel";
 import BeatSpeed from "./BeatSpeed";
 import InstrumentSelect from "./InstrumentSelect";
 import { IO } from "./io/IO";
 import PlayAll from "./PlayAll";
 
 import './ControlPanel.scss';
+import RibonMenu from "../components/ribon/Ribon";
+import { IoModel } from "../viewmodels";
+import Music from "./Music";
 
 interface Props {
+    ioModel :IoModel;
     selectedInstrumentNameState :State<string>;
     beatSpeedState :State<number>;
+    titleState :State<string>;
     playSuspender :PlaySuspender|null;
     saveDataTitles :string[];
-    saveData :SaveData;
-    onPlayAll :()=>void;
-    onPlayBelow :()=>void;
-    onPlayScope :()=>void;
-    onSaving :()=>void;
-    onLoading :(title :string)=>void;
-    setSaveData :(saeData :SaveData)=>void;
+    speakerModel :SpeakerModel;
 }
 export default function ControlPanel(props :Props) {
     const {
+        ioModel,
         selectedInstrumentNameState,
         beatSpeedState,
-        playSuspender, onPlayAll, onPlayBelow, onPlayScope,
-        saveDataTitles, onSaving, onLoading,
-        saveData, setSaveData
+        playSuspender, speakerModel,
+        titleState,
+        saveDataTitles,
     } = props;
     return (
-        <div className='menu'>
-            <IO
-                saveDataTitles={saveDataTitles}
-                onSaving={onSaving}
-                onLoading={onLoading}
-                saveData={saveData}
-                onImported={setSaveData}
-                />
-            <PlayAll
-                playSuspender={playSuspender}
-                onPlayAll={onPlayAll}
-                onPlayBelow={onPlayBelow}
-                onPlayScope={onPlayScope}
-                />
-            <InstrumentSelect
-                selectedInstrumentNameState={selectedInstrumentNameState}
-                />
-            <BeatSpeed
-                beatSpeedState={beatSpeedState}
-                />
+        <div className='control_panel_grid'>
+            <RibonMenu
+                menuItems={[
+                    { menuLabel:'Play', menuContent: <PlayAll
+                        playSuspender={playSuspender}
+                        speakerModel={speakerModel}
+                        />},
+                    { menuLabel: "Music", menuContent: <Music
+                        beatSpeedState={beatSpeedState}
+                        selectedInstrumentNameState={selectedInstrumentNameState}
+                        />},
+                    { menuLabel:'System', menuContent: <IO
+                        ioModel={ioModel}
+                        titleState={titleState}
+                        saveDataTitles={saveDataTitles}
+                        /> },
+                ]}/>
         </div>
     )
 }

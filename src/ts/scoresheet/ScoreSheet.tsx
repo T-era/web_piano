@@ -1,4 +1,6 @@
-import { keyboardShiftWidth, octaveWidth, scoreButtonWidth, ScoreItem, scoreSheetRowHeight, scoreSideButtonWidth } from '../base';
+import { keyboardShiftWidth, octaveWidth, scoreButtonWidth, ScoreItem, scoreSheetRowHeight } from '../base';
+import { Model, SpeakerModel } from '../viewmodels';
+import { ScoreModel } from '../viewmodels/ScoreModel';
 
 import './ScoreSheet.scss';
 import ScoreSheetRow from './ScoreSheetRow';
@@ -15,8 +17,9 @@ function range<T>(from :T, to :T, f :(t:T)=>T) :T[] {
 interface Props {
     scoreContents :ScoreItem[][];
     selectedScoreRow :number;
-    onPlayingChord :(levels :number[])=>void;
-    onPutASoundAt :(row :number, level :number)=>void;
+    speakerModel :SpeakerModel;
+    model :Model;
+    scoreModel :ScoreModel;
     onRowSelected :(row :number)=>void;
 }
 export default function ScoreSheet(props :Props) {
@@ -43,8 +46,9 @@ export default function ScoreSheet(props :Props) {
                     rowAt={i}
                     isSelectedRow={i == props.selectedScoreRow}
                     onRowSelected={props.onRowSelected}
-                    onPlayingChord={props.onPlayingChord}
-                    onPutASoundAt={props.onPutASoundAt} />
+                    speakerModel={props.speakerModel}
+                    model={props.model}
+                    scoreModel={props.scoreModel} />
             )}
         </svg>
     </>);

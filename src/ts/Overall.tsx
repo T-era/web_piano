@@ -1,18 +1,16 @@
-import { createRef, ReactElement, useEffect, useState } from 'react';
+import { createRef, ReactElement, useEffect, useMemo, useState } from 'react';
 
 import Keyboard from './keyboard';
 import ControlPanel from './controlpanel';
 import ScoreSheet from './scoresheet/ScoreSheet';
-import TitleBar from './header/TitleBar';
 import lsio from './io/LocalStorageIo';
 
 import { organ } from './sound/instruments';
-import { KeyboardToneShift, scoreSheetRowHeight, wrap } from './base';
-import { Model, newScoreRow, KeyListener, IoModel, SpeakerModel, PlaySuspender } from './viewmodels';
+import { KeyboardToneShift, newScoreRow, scoreSheetRowHeight, wrap } from './base';
+import { Model, KeyListener, IoModel, SpeakerModel, PlaySuspender } from './viewmodels';
 
 import './Overall.scss'
-import { SaveData } from './io/util';
-
+import { ScoreModel } from './viewmodels/ScoreModel';
 
 export default function Overall() :ReactElement {
     const tilteUndefined = lsio.autoNaming();
@@ -27,69 +25,80 @@ export default function Overall() :ReactElement {
 
     let scoreSheetRef = createRef<HTMLDivElement>();
 
-    const model = new Model(
-        ktsState,
-        scoreContentsState,
-        selectedScoreRowState,
-        instrumentNameState.value);
-    const soundModel = new SpeakerModel(
-        playSuspenderState,
-        scoreContentsState.value,
-        selectedScoreRowState.value,
-        instrumentNameState.value,
-        beatSpeedState.value);
-    const ioModel = new IoModel(
-        titleState,
-        saveDataTitlesState,
-        scoreContentsState,
-        instrumentNameState,
-        beatSpeedState);
-    const keyListener = new KeyListener(
-        model,
-        scoreContentsState,
-        ktsState.value,
-        selectedScoreRowState.value);
+    const model = useMemo(
+        () => new Model(
+            ktsState,
+            selectedScoreRowState),
+        [ktsState.value, scoreContentsState.value]);
+    const scoreModel = useMemo(
+        () => new ScoreModel(
+            model,
+            scoreContentsState,
+            selectedScoreRowState,
+            instrumentNameState.value),
+        [model, scoreContentsState.value, selectedScoreRowState.value, instrumentNameState.value]);
+    const speakerModel = useMemo(
+        () => new SpeakerModel(
+            playSuspenderState,
+            scoreContentsState.value,
+            selectedScoreRowState.value,
+            instrumentNameState.value,
+            beatSpeedState.value),
+        [playSuspenderState.value, scoreContentsState.value, selectedScoreRowState.value, instrumentNameState.value, beatSpeedState.value]);
+    const ioModel = useMemo(
+        () => new IoModel(
+            titleState,
+            saveDataTitlesState,
+            scoreContentsState,
+            instrumentNameState,
+            beatSpeedState),
+        [titleState.value, saveDataTitlesState.value, scoreContentsState.value, instrumentNameState.value, beatSpeedState.value]);
+    const keyListener = useMemo(
+        () => new KeyListener(
+            model,
+            scoreModel,
+            scoreContentsState,
+            ktsState.value,
+            selectedScoreRowState.value),
+        [model, scoreModel, scoreContentsState.value, ktsState.value, selectedScoreRowState.value]);
 
     useEffect(() => {
+        // 譜面の強制スクロール
         const { value: selectedScoreRow } = selectedScoreRowState;
         if (selectedScoreRow.forceFocus) {
             scoreSheetRef.current?.scrollTo(0, (selectedScoreRow.row - 3) * scoreSheetRowHeight);
         }
-    })
+    });
     return (<>
         <header>
-            <TitleBar titleState={titleState} />
         </header>
-        <main tabIndex={-1} onKeyDown={keyListener.keyboardEventHandler.bind(keyListener)}>
-            <div className='scroll_container'>
+        <main>
+            <div className='control_panel'>
+                <ControlPanel
+                    selectedInstrumentNameState={instrumentNameState}
+                    beatSpeedState={beatSpeedState}
+                    speakerModel={speakerModel}
+                    playSuspender={playSuspenderState.value}
+                    ioModel={ioModel}
+                    saveDataTitles={lsio.fileNames}
+                    titleState={titleState}
+                    />
+            </div>
+            <div className='scroll_container' tabIndex={-1} onKeyDown={keyListener.keyboardEventHandler.bind(keyListener)}>
                 <div className='sheet' ref={scoreSheetRef}>
                     <ScoreSheet
                         scoreContents={scoreContentsState.value}
                         selectedScoreRow={selectedScoreRowState.value.row}
                         onRowSelected={(row) => model.setRowWithFocus({ row, forceFocus: true })}
-                        onPlayingChord={soundModel.makeASoundChord.bind(soundModel)}
-                        onPutASoundAt={(row, level) => model.putASoundAt(row, level, false)}/>
+                        speakerModel={speakerModel}
+                        model={model}
+                        scoreModel={scoreModel} />
                 </div>
                 <div className='keyboard'>
                     <Keyboard kts={ktsState.value}
-                        onToneChanging={model.onToneChanging.bind(model)}
-                        onPutASound={model.putASound.bind(model)}/>
+                        model={model}
+                        scoreModel={scoreModel}/>
                 </div>
-            </div>
-            <div className='control_panel'>
-                <ControlPanel
-                    selectedInstrumentNameState={instrumentNameState}
-                    beatSpeedState={beatSpeedState}
-                    playSuspender={playSuspenderState.value}
-                    saveData={ioModel.export()}
-                    onPlayAll={soundModel.playAll.bind(soundModel)}
-                    onPlayBelow={soundModel.playBelow.bind(soundModel)}
-                    onPlayScope={soundModel.playScope.bind(soundModel)}
-                    saveDataTitles={lsio.fileNames}
-                    onLoading={(loadingTitle)=>ioModel.load(loadingTitle)}
-                    onSaving={()=>{ioModel.save()}}
-                    setSaveData={(saveData :SaveData) => ioModel.import(saveData)}
-                    />
             </div>
         </main>
     </>);

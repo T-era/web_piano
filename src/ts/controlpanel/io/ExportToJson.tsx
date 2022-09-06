@@ -1,16 +1,17 @@
-import MenuDetail from "../../components/MenuDetail";
+import WithToolTip from "../../components/WithToolTip";
 import { exportToJson } from "../../io/Text";
-import { SaveData } from "../../io/util";
+import { IoModel } from "../../viewmodels";
+import { ExportToJsonIcon } from "./IOIcons";
 
 import './LoadDialog.scss';
 
 interface Props {
-    saveData :SaveData;
+    ioModel :IoModel;
 }
-export default function ExportToJson({ saveData } :Props) {
+export default function ExportToJson({ ioModel } :Props) {
     return (
-        <MenuDetail menu="Export">
-            <textarea value={exportToJson(saveData)} />
-        </MenuDetail>
+        <WithToolTip toolTipLabel={<ExportToJsonIcon/>}>
+            <textarea defaultValue={exportToJson(ioModel.export())} />
+        </WithToolTip>
     )
 }

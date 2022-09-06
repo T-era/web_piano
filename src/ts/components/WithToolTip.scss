@@ -1,9 +1,10 @@
-.menu_dialog_contents {
+.tooltip_label {
+    display: unset;
+}
+.tooltip_content {
     position: absolute;
     width: fit-content;
     height: fit-content;
-    margin: auto;
-    bottom: 4.5em;
     border: 1px solid rgb(204, 204, 204);
     background: rgb(255, 255, 255) none repeat scroll 0% 0%;
     border-radius: 4px;
@@ -12,11 +13,11 @@
     &::before {
         content: "";
         position: absolute;
-        top: 100%;
+        top: -10px;
         left: 5px;
         width: 0;
         height: 0;
-        border-top: 10px solid rgb(204,204,204);
+        border-bottom: 10px solid rgb(204,204,204);
         border-right: 10px solid transparent;
         border-left: 0px solid transparent;
       }

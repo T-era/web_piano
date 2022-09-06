@@ -1,5 +1,7 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { keyboardShiftWidth, scoreButtonWidth, ScoreItem, scoreSheetRowHeight } from '../base';
+import { Model } from '../viewmodels';
+import { ScoreModel } from '../viewmodels/ScoreModel';
 
 import './ScoreSheetCell.scss';
 
@@ -13,10 +15,11 @@ function fillColor(distance :number) :string {
 }
 
 interface Props {
+    model :Model;
+    scoreModel :ScoreModel;
     scoreContents :ScoreItem[][];
     rowAt :number;
     levelAt :number;
-    onClick :()=>void;
 }
 // fill: #f45; 255 68 85
 
@@ -30,13 +33,15 @@ function seekDistanceFromStart(scoreContents :ScoreItem[][], level :number, row 
     return distance;
 }
 
-export default function ScoreSheetCell({scoreContents, levelAt, rowAt, onClick} :Props) {
+export default function ScoreSheetCell({model, scoreModel, scoreContents, levelAt, rowAt} :Props) {
     const itemAt = scoreContents[rowAt][levelAt];
     const classNameMain = itemAt === ScoreItem.None
         ? 'empty'
         : 'fill';
     const distance = seekDistanceFromStart(scoreContents, levelAt, rowAt);
     const isContinueItem = itemAt === ScoreItem.Continue;
+    const onClick = useCallback(() => scoreModel.putASoundAt(rowAt, levelAt, false),
+        [scoreModel, rowAt, levelAt]);
     const memoResult = useMemo(() => (
         <>
             <rect
@@ -52,6 +57,6 @@ export default function ScoreSheetCell({scoreContents, levelAt, rowAt, onClick} 
                     l 0 10`} stroke='blue' />
                 : undefined }
         </>
-    ), [itemAt, isContinueItem]);
+    ), [itemAt, distance]);
     return memoResult;
 }

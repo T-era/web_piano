@@ -1,55 +1,49 @@
-import { SaveData } from "../../io/util";
 import ExportToJson from "./ExportToJson";
 import ImportFromJson from "./ImportFromJsom";
 import Load from "./Load";
 import Save from "./Save";
+import NamePlate from "./NamePlate";
+import { State } from "../../base";
+import { IoModel } from "../../viewmodels";
 
 import './IO.scss';
 
 interface Props {
+    titleState :State<string>;
     saveDataTitles :string[];
-    onLoading :(title :string)=>void;
-    onSaving :()=>void;
-    saveData :SaveData;
-    onImported :(saveData :SaveData)=>void;
+    ioModel :IoModel;
 }
 export function IO(props :Props) {
-    const {saveDataTitles, onLoading, onSaving} = props;
-    const {saveData, onImported} = props;
+    const {titleState, saveDataTitles, ioModel} = props;
     return (
-        <details style={{display: "inline-block"}}>
-            <summary>Save/Load</summary>
-            <div className='details_content'>
-                <SaveLoad saveDataTitles={saveDataTitles} onLoading={onLoading} onSaving={onSaving} />
-                <ExpImp saveData={saveData} onImported={onImported} />
-            </div>
-        </details>
+        <>
+            <SaveLoad saveDataTitles={saveDataTitles} ioModel={ioModel} />
+            <ExpImp ioModel={ioModel} />
+        </>
     );
 }
 interface SLProps {
     saveDataTitles :string[];
-    onLoading :(title :string)=>void;
-    onSaving :()=>void;
+    ioModel :IoModel;
 }
 
-function SaveLoad({saveDataTitles, onLoading, onSaving} :SLProps) {
+function SaveLoad({saveDataTitles, ioModel} :SLProps) {
     return (
         <>
-            <Save onSaving={onSaving} />
-            <Load saveDataTitles={saveDataTitles} onLoading={onLoading} />
+            <Save ioModel={ioModel} />
+            <Load saveDataTitles={saveDataTitles} ioModel={ioModel} />
         </>
     );
 }
 
 interface ExImProps {
-    saveData :SaveData;
-    onImported :(saveData :SaveData)=>void;
+    ioModel :IoModel;
 }
-function ExpImp({saveData, onImported} :ExImProps) {
+function ExpImp({ioModel} :ExImProps) {
     return (
         <>
-            <ExportToJson saveData={saveData} />
-            <ImportFromJson onImported={onImported}  />
+            <ExportToJson ioModel={ioModel} />
+            <ImportFromJson ioModel={ioModel}  />
         </>
    );
 }

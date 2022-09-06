@@ -1,0 +1,15 @@
+.music_menu_frame {
+    display: grid;
+    grid-template-columns: 10em 20em;
+    dl.music_menu_item {
+        margin: 0;
+        padding: 0;
+        dt {
+            float: left;
+        }
+        dd {
+            margin: 0;
+            padding: 0;     
+        }
+    }
+}

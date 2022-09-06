@@ -1,5 +1,7 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { levelsFromScores, octaveWidth, scoreButtonWidth, ScoreItem, scoreSheetRowHeight } from '../base';
+import { Model, SpeakerModel } from '../viewmodels';
+import { ScoreModel } from '../viewmodels/ScoreModel';
 import CurrentRowMark from './CurrentRowMark';
 import NoteMark from './NoteMark';
 import ScoreSheetCell from './ScoreSheetCell';
@@ -11,11 +13,17 @@ interface Props {
     rowAt :number;
     isSelectedRow :boolean;
     onRowSelected :(row :number)=>void;
-    onPlayingChord :(levels:number[])=>void;
-    onPutASoundAt :(row :number, level :number)=>void;
+    speakerModel :SpeakerModel;
+    model :Model;
+    scoreModel :ScoreModel;
 }
-export default function ScoreSheetRow({scoreContents, rowAt, isSelectedRow, onRowSelected, onPlayingChord, onPutASoundAt} :Props) {
+export default function ScoreSheetRow({model, scoreModel, speakerModel, scoreContents, rowAt, isSelectedRow, onRowSelected, } :Props) {
     const lineAt = scoreContents[rowAt];
+    const onClickNoteMark = useCallback(() => {
+        const levels = levelsFromScores(lineAt);
+        speakerModel.makeASoundChord(levels);
+    }, [lineAt, speakerModel]);
+
     const memoResult = useMemo(() => (
         <g>
             <rect x={0} y={rowAt * scoreSheetRowHeight}
@@ -25,17 +33,16 @@ export default function ScoreSheetRow({scoreContents, rowAt, isSelectedRow, onRo
                 className='is_selected' />
             <CurrentRowMark isSelectedRow={isSelectedRow} y={rowAt * scoreSheetRowHeight}
                 onClick={() => onRowSelected(rowAt)} />
-            <NoteMark y={rowAt * scoreSheetRowHeight} onClicked={()=>{
-                const levels = levelsFromScores(lineAt);
-                onPlayingChord(levels);
-            }}/>
+            <NoteMark y={rowAt * scoreSheetRowHeight}
+                onClicked={onClickNoteMark}/>
             {lineAt.map((item, x) => 
                 <ScoreSheetCell
                     key={x} rowAt={rowAt} levelAt={x}
                     scoreContents={scoreContents}
-                    onClick={() => onPutASoundAt(rowAt, x)} />
+                    model={model}
+                    scoreModel={scoreModel} />
             )}
         </g>
-    ), [lineAt, isSelectedRow]);
+    ), [model, speakerModel, lineAt, isSelectedRow]);
     return memoResult;
 }

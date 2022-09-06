@@ -1,16 +1,18 @@
-svg {
-    background: #000;
+svg.keyboard {
+    background: none;
     width: 100%;
     height: 100%;
     rect.btn_tone {
         stroke: white;
         fill: #444;
+        cursor: pointer;
     } 
     text.btn_tone {
         stroke: #6af;
     }
     g {
         rect.key {
+            cursor: pointer;
             stroke: #000;
             stroke-width: 1px;
             &.white {

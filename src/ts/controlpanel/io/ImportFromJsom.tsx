@@ -1,9 +1,10 @@
 import { useState } from "react";
 import Modal from 'react-modal';
 import { wrap } from "../../base";
-import MenuDetail from "../../components/MenuDetail";
-import { exportToJson, importFromJson } from "../../io/Text";
-import { SaveData } from "../../io/util";
+import WithToolTip from "../../components/WithToolTip";
+import { importFromJson } from "../../io/Text";
+import { IoModel } from "../../viewmodels";
+import { ImportFromJsonIcon } from "./IOIcons";
 
 import './LoadDialog.scss';
 
@@ -13,25 +14,27 @@ const overlayStyle = {
 }
 
 interface Props {
-    onImported :(saveData :SaveData) => void;
+    ioModel :IoModel;
 }
-export default function ImportFromJson({ onImported } :Props) {
+export default function ImportFromJson({ ioModel } :Props) {
     const [textContents, setTextContents] = useState('');
     const modalIsOpenState = wrap(useState(false));
     const close = (isDone :boolean) => {
         if (isDone) {
             const saveData = importFromJson(textContents);
             if (saveData !== null) {
-                onImported(saveData);
+                ioModel.import(saveData);
             }
         }
         modalIsOpenState.set(false);
     }
     return (
-        <MenuDetail menu="Import" modalIsOpenState={modalIsOpenState}>
+        <WithToolTip toolTipLabel={<ImportFromJsonIcon/>} modalIsOpenState={modalIsOpenState}>
+            <div>
                 <textarea value={textContents} onChange={(e) => setTextContents(e.target.value)} />
-                <button onClick={()=>close(true)}>OK</button>
-                <button onClick={()=>close(false)}>Cancel</button>
-        </MenuDetail>
+            </div>
+            <button onClick={()=>close(true)}>OK</button>
+            <button onClick={()=>close(false)}>Cancel</button>
+        </WithToolTip>
     )
 }
