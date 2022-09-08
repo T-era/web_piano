@@ -1,6 +1,7 @@
 import { Instrument } from './instruments';
 
 const channels = 1;
+const audioContext = new window.AudioContext();
 
 export interface Atom {
     start :number;
@@ -8,15 +9,14 @@ export interface Atom {
     length :number;
 }
 export default class Player {
-    context :AudioContext = new window.AudioContext();
     beatSec :number;
 	buffer :AudioBuffer;
 
     constructor(totalLen :number, beatSec :number) {
-        const sampleRate = this.context.sampleRate;
+        const sampleRate = audioContext.sampleRate;
         const frameCount = sampleRate * beatSec * totalLen;
         this.beatSec = beatSec;
-        this.buffer = this.context.createBuffer(channels, frameCount, sampleRate);
+        this.buffer = audioContext.createBuffer(channels, frameCount, sampleRate);
     }
     play(instrument :Instrument, level :number) {
         this.playChord(instrument, [level]);
@@ -25,13 +25,13 @@ export default class Player {
         if (levels.length === 0) {
             return;
         }
-        const sp = support(this.context, this.buffer.getChannelData(0), this.beatSec, instrument);
+        const sp = support(audioContext, this.buffer.getChannelData(0), this.beatSec, instrument);
         sp.setBuffer(0, levels, 1);
-		var source = this.context.createBufferSource();
+		var source = audioContext.createBufferSource();
 		// AudioBufferSourceNodeにバッファを設定する
 		source.buffer = this.buffer;
 
-		source.connect(this.context.destination);
+		source.connect(audioContext.destination);
 		// 再生
 		source.start(0);
     }
@@ -40,14 +40,14 @@ export default class Player {
             setTimeout(onEnded, 0);
             return ()=>{};
         }
-        const sp = support(this.context, this.buffer.getChannelData(0), this.beatSec, instrument);
+        const sp = support(audioContext, this.buffer.getChannelData(0), this.beatSec, instrument);
         melody.forEach((atom) => {
             sp.setBuffer(atom.start, [atom.level], atom.length);
         })
-        var source = this.context.createBufferSource();
+        var source = audioContext.createBufferSource();
         source.onended = onEnded;
         source.buffer = this.buffer;
-        source.connect(this.context.destination);
+        source.connect(audioContext.destination);
         source.start(0);
         return () => source.stop();
     }
