@@ -1,0 +1,21 @@
+div#menu_content_system(hidden='hidden')
+    div.tooltip_label(-tooltip_content='system_save_content')
+        include ./SaveLabel
+    div.tooltip_content#system_save_content
+        include ./Save
+
+    div.tooltip_label(-tooltip_content='system_load_content')
+        include ./LoadLabel
+    div.tooltip_content#system_load_content
+        include ./Load
+
+    div#tooltip_label_export_to_json.tooltip_label(-tooltip_content='export_to_json_content')
+        include ./ExportToJsonLabel
+    div.tooltip_content#export_to_json_content
+        include ./ExportToJson
+
+
+    div#tooltip_label_import_from_json.tooltip_label(-tooltip_content='import_from_json_content')
+        include ./ImportFromJsonLabel
+    div.tooltip_content#import_from_json_content
+        include ./ImportFromJson

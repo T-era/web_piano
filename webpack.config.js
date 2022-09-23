@@ -12,7 +12,7 @@ module.exports = {
   mode: "development",
 
   // メインとなるJavaScriptファイル（エントリーポイント）
-  entry: "./src/ts/index.tsx",
+  entry: "./src/ts/index.ts",
   // ファイルの出力設定
   output: {
     //  出力ファイルのディレクトリ名
@@ -24,8 +24,8 @@ module.exports = {
   module: {
     rules: [
       {
-        // 拡張子 .ts もしくは .tsx の場合
-        test: /\.tsx?$/,
+        // 拡張子 .ts の場合
+        test: /\.ts$/,
         // TypeScript をコンパイルする
         use: "ts-loader"
       }, {
@@ -44,12 +44,26 @@ module.exports = {
             loader: "svg-url-loader"
           }
         ]
+      }, {
+        test: /\.pug$/,
+        use: [
+          {
+            loader: "html-loader"
+          }, {
+            loader: "pug-html-loader",
+            options: {
+              data: {
+                PUBLIC_URL: PUBLIC_URL
+              }
+            }
+          }
+        ]
       }
     ]
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: './src/static/index.html',
+      template: './src/pug/index.html.pug',
       filename: 'index.html',
       templateParameters: {
         PUBLIC_URL: PUBLIC_URL,
@@ -60,9 +74,6 @@ module.exports = {
       patterns: [{
         from: "./src/static/favicon.svg",
         to: OUTPUT_DIR
-//      }, {
-//        from: "./src/static/manifest.json",
-//        to: OUTPUT_DIR
       }]
     }),
     new InlineSourceWebpackPlugin({
@@ -73,7 +84,7 @@ module.exports = {
   ],
   // import 文で .ts や .tsx ファイルを解決するため
   resolve: {
-    extensions: [".ts", ".tsx", ".js", ".json"]
+    extensions: [".ts", ".js", ".json"]
   },
   // ES5(IE11等)向けの指定（webpack 5以上で必要）
   target: ["web", "es5"],

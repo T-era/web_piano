@@ -1,0 +1,20 @@
+doctype html
+html(lang="ja")
+    head
+        meta(charset="utf-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1")
+        meta(name="theme-color", content="#000000")
+        meta(name="description", content="Web Piano")
+        title Piano
+    body
+        noscript You need to enable JavaScript to run this app.
+        div#__background
+            div#root(tabindex="-1")
+                div.control_panel
+                    include header/menu
+                div.scroll_container
+                    div.sheet
+                        include score/score
+                    div.keyboard
+                        include keyboard/keyboard
+                

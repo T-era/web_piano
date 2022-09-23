@@ -1,0 +1,10 @@
+include ./keyboard_mixin
+include ../constant_vars
+
+svg.keyboard(xmlns=ns_svg viewBox=`0 0 ${width} 200` style=`width: ${width}px;`)
+    +buttonTone(true, 'z')
+    +octave(0)
+    +octave(1)
+    +octave(2)
+    +octave(3)
+    +buttonTone(false, '_')

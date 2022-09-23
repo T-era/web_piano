@@ -1,0 +1,39 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+#__background {
+    height: 100%;
+    #root {
+        height: 100%;
+        .control_panel {
+            height: 6em;
+            @import './header/ControlPanel';
+        }
+        .scroll_container {
+            position: relative;
+            width: 100%;
+            height: calc(100% - 6em - 1em);
+            overflow-x: scroll;
+            .sheet {
+                position: absolute;
+                bottom: 200px;
+                max-height: min(calc(100% - 200px - 15px), 500px);  // 分割管理のための上限500px
+                overflow-y: scroll;
+                @import './score/ScoreSheet';
+            }
+            .keyboard {
+                position: absolute;
+                bottom: 0;
+                height: 200px;
+                @import "./keyboard/keyboard";
+            }
+        }
+        @import "./components/ribon/Ribon";
+    }
+    @import "./components/modal/WithToolTip";
+    .tooltip_background {
+        @import './header/system/NamePlate';
+    }
+}

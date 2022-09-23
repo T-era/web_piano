@@ -1,0 +1,9 @@
+include ../../constant_vars
+
+mixin RecIcon(id)
+    svg.play_controll(xmlns=ns_svg id=id viewBox=`0 0 200 200`)
+        title Rec
+        circle.grid.rec_grid(cx=100 cy=100 r=90)
+        circle.rec_mark(cx=100 cy=100 r=80)
+        text.caption(x=100 y=100 font-size=50 text-anchor='middle' dominant-baseline='central').
+            Rec

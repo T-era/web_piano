@@ -1,0 +1,32 @@
+.is_selected {
+    stroke: blue;
+    fill: blue;
+}
+rect.note_mark {
+    cursor: pointer;
+}
+path.note_mark {
+    fill: #008;
+    stroke: none;
+    stroke-width: 2px;
+    pointer-events: none;
+}
+
+.background {
+    fill: white;
+    stroke: white;
+}
+.add_prev_row_circle {
+    fill: #44f;
+}
+.add_prev_row_cross {
+    stroke: white;
+}
+.remove_row_circle {
+    fill: #f44;
+}
+.remove_row_bar {
+    stroke: white;
+}
+
+@import './ScoreSheetCell';

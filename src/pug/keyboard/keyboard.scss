@@ -1,0 +1,43 @@
+svg.keyboard {
+    background: none;
+    width: 100%;
+    height: 100%;
+    g.btn_tone {
+        rect {
+            stroke: white;
+            fill: #444;
+            cursor: pointer;
+        }
+        text {
+            stroke: #6af;
+        }
+        } 
+    g {
+        rect.key {
+            cursor: pointer;
+            stroke: #000;
+            stroke-width: 1px;
+            &.white {
+                stroke: #000;
+                fill: #fff;
+            }
+            &.black {
+                fill: #333;
+            }
+        }
+//        text.key {
+//            display: none;
+//        }
+        text.key {
+            &.white {
+                stroke: #000;
+            }
+            &.black {
+                stroke: #fff;
+            }
+        }
+        .guideline {
+            stroke: #aaa;
+        }
+    }
+}

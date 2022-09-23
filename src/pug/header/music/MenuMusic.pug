@@ -1,0 +1,19 @@
+div#menu_content_music(hidden='hidden')
+    div.music_menu_frame
+        dl.music_menu_item
+            dt 楽器
+            dd
+                select#instrument_select(size=3)
+        dl.music_menu_item
+            dt テンポ
+            dd
+                input#beat_speed_input(type='number' min=0 step=0.1)
+        dl.music_menu_item
+            dt 長さ
+            dd
+                div
+                    div
+                        input#music_length_input(type='number' min=1 step=1)
+                    button#music_length_ok Apply
+                    button#music_length_cancel Cancel
+                    div#music_length_notice

@@ -1,0 +1,19 @@
+include ../../constant_vars
+
+mixin PlayIcon(id, title, caption)
+    svg.play_controll(xmlns=ns_svg id=id viewBox=`0 0 200 200`)
+        title !{title}
+        path.grid.play_grid(
+            d="M10 10,10 190,190 100Z")
+        path.play_mark(
+            d="M20 25,20 175,170 100Z")
+        text.caption(x=70 y=100 font-size=50 text-anchor='middle' dominant-baseline='central').
+            !{caption} 
+
+mixin SuspendIcon(id)
+    svg.play_controll(xmlns=ns_svg id=id viewBox=`0 0 200 200` visibility='hidden')
+        path.gird.suspend_grid(stroke="red" stroke-width=5 fill="none"
+            d="M10 10,10 190,190 190,190 10Z")
+        path.suspend_mark(fill="red"
+            d="M20 20,20 180,180 180,180 20Z")
+        text.caption(x=100 y=100 font-size=50 text-anchor='middle' dominant-baseline='central') STOP

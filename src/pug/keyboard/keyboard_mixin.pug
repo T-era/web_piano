@@ -1,0 +1,48 @@
+include ../constant_vars
+
+mixin octave(toneLevel)
+    - var dx = keyboardShiftWidth + toneLevel * octaveWidth
+    - var toneBase = toneLevel * 12
+    g
+        +white(dx + keyboardWhiteWidth * 0, toneBase + 0)
+        +white(dx + keyboardWhiteWidth * 1, toneBase + 2)
+        +white(dx + keyboardWhiteWidth * 2, toneBase + 4)
+        +white(dx + keyboardWhiteWidth * 3, toneBase + 5)
+        +white(dx + keyboardWhiteWidth * 4, toneBase + 7)
+        +white(dx + keyboardWhiteWidth * 5, toneBase + 9)
+        +white(dx + keyboardWhiteWidth * 6, toneBase + 11)
+        +black(dx + keyboardWhiteWidth * 1, toneBase + 1)
+        +black(dx + keyboardWhiteWidth * 2, toneBase + 3)
+        +black(dx + keyboardWhiteWidth * 4, toneBase + 6)
+        +black(dx + keyboardWhiteWidth * 5, toneBase + 8)
+        +black(dx + keyboardWhiteWidth * 6, toneBase + 10)
+        line.guideline(x1=dx + keyboardWhiteWidth * 0, y1=10, x2=dx + scoreButtonWidth * 0, y2=0)
+        line.guideline(x1=dx + keyboardWhiteWidth * 1 - keyboardBlackWidth / 2, y1=10, x2=dx + scoreButtonWidth * 1, y2=0)
+        line.guideline(x1=dx + keyboardWhiteWidth * 1 + keyboardBlackWidth / 2, y1=10, x2=dx + scoreButtonWidth * 2, y2=0)
+        line.guideline(x1=dx + keyboardWhiteWidth * 2 - keyboardBlackWidth / 2, y1=10, x2=dx + scoreButtonWidth * 3, y2=0)
+        line.guideline(x1=dx + keyboardWhiteWidth * 2 + keyboardBlackWidth / 2, y1=10, x2=dx + scoreButtonWidth * 4, y2=0)
+        line.guideline(x1=dx + keyboardWhiteWidth * 3, y1=10, x2=dx + scoreButtonWidth * 5, y2=0)
+        line.guideline(x1=dx + keyboardWhiteWidth * 4 - keyboardBlackWidth / 2, y1=10, x2=dx + scoreButtonWidth * 6, y2=0)
+        line.guideline(x1=dx + keyboardWhiteWidth * 4 + keyboardBlackWidth / 2, y1=10, x2=dx + scoreButtonWidth * 7, y2=0)
+        line.guideline(x1=dx + keyboardWhiteWidth * 5 - keyboardBlackWidth / 2, y1=10, x2=dx + scoreButtonWidth * 8, y2=0)
+        line.guideline(x1=dx + keyboardWhiteWidth * 5 + keyboardBlackWidth / 2, y1=10, x2=dx + scoreButtonWidth * 9, y2=0)
+        line.guideline(x1=dx + keyboardWhiteWidth * 6 - keyboardBlackWidth / 2, y1=10, x2=dx + scoreButtonWidth * 10, y2=0)
+        line.guideline(x1=dx + keyboardWhiteWidth * 6 + keyboardBlackWidth / 2, y1=10, x2=dx + scoreButtonWidth * 11, y2=0)
+        line.guideline(x1=dx + keyboardWhiteWidth * 7, y1=10, x2=dx + scoreButtonWidth * 12, y2=0)
+
+mixin white(x, level)
+    g(id='keyboard_' + level)
+        rect.key.white(x=x, y=10, width=keyboardWhiteWidth, height=190)
+        text.key.white(x=x + keyboardWhiteWidth / 2, y=185, text-anchor='middle', dominant-baseline='central')
+
+mixin black(x, level)
+    g(id='keyboard_' + level)
+        rect.key.black(x=x - keyboardBlackWidth / 2, y=10, width=keyboardBlackWidth, height=110)
+        text.key.black(x=x, y=105, text-anchor='middle', dominant-baseline='central')
+
+mixin buttonTone(isToDown, shortcutKey)
+    - var x = isToDown ? 0 : keyboardShiftWidth + octaveWidth * 4
+    g.btn_tone(id=`button_tone_${isToDown ? 'd' : 'u'}`)
+        rect(x=x, y=100-keyboardShiftWidth/2, width=40, height=40, rx=5, ry=5)
+        text(x=x+keyboardShiftWidth/2, y=90, text-anchor='middle', dominant-baseline='central') !{isToDown ? "<" : ">"}
+        text(x=x+keyboardShiftWidth/2, y=110, text-anchor='middle', dominant-baseline='central') !{shortcutKey}

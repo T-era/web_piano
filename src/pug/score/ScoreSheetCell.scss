@@ -1,0 +1,10 @@
+.cell {
+    cursor: crosshair;
+    stroke: #f8a;
+    &.empty {
+        fill: white;
+    }
+}
+.continuation_mark {
+    stroke: blue;
+}

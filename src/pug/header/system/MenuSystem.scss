@@ -1,0 +1,30 @@
+#menu_content_system {
+    height: 100%;
+    .tooltip_label {
+        height: 100%;
+        svg {
+            height: 100%;
+            .border {
+                stroke: red;
+                fill: none;
+            }
+            .arrow {
+                stroke: none;
+                fill: #f30;
+            } 
+            .folder {
+                stroke: #820;
+                fill: #fb8;
+            }
+            .note_mark {
+                stroke: none;
+                fill: #600;
+            }
+            .json {
+                stroke: black;
+                fill: black;
+            }
+        }
+    }
+    @import "./NamePlate";
+}

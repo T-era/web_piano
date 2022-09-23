@@ -1,0 +1,9 @@
+include ./PlayMixin
+include ./RecMixin
+
+div#menu_content_play
+    + RecIcon('play_rec')
+    + PlayIcon('play_all', 'Play ALL', 'ALL')
+    + PlayIcon('play_below', 'Play below...', '|=>')
+    + PlayIcon('play_view', 'Play only view range', '|〜|')
+    + SuspendIcon('suspend')

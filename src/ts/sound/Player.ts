@@ -1,75 +1,103 @@
-import { Instrument } from './instruments';
+import { Instrument } from "./instruments";
+import { aLevel, audioContext } from "../base";
 
-const channels = 1;
-const audioContext = new window.AudioContext();
+// 各音階の音源データを用意します。
+export class PlayerSet {
+    private readonly players :Player[];
 
-export interface Atom {
-    start :number;
-    level :number;
-    length :number;
-}
-export default class Player {
-    beatSec :number;
-	buffer :AudioBuffer;
-
-    constructor(totalLen :number, beatSec :number) {
-        const sampleRate = audioContext.sampleRate;
-        const frameCount = sampleRate * beatSec * totalLen;
-        this.beatSec = beatSec;
-        this.buffer = audioContext.createBuffer(channels, frameCount, sampleRate);
+    constructor(instrument :Instrument, levels :number = 48) {
+        this.players = new Array(levels).fill(0).map((_, level) => 
+            new Player(instrument, level)
+        )
     }
-    play(instrument :Instrument, level :number) {
-        this.playChord(instrument, [level]);
-    }
-    playChord(instrument :Instrument, levels :number[]) {
-        if (levels.length === 0) {
-            return;
-        }
-        const sp = support(audioContext, this.buffer.getChannelData(0), this.beatSec, instrument);
-        sp.setBuffer(0, levels, 1);
-		var source = audioContext.createBufferSource();
-		// AudioBufferSourceNodeにバッファを設定する
-		source.buffer = this.buffer;
-
-		source.connect(audioContext.destination);
-		// 再生
-		source.start(0);
-    }
-    playMelody(instrument :Instrument, melody :Atom[], onEnded :()=>void):()=>void {
-        if (melody.length === 0) {
-            setTimeout(onEnded, 0);
-            return ()=>{};
-        }
-        const sp = support(audioContext, this.buffer.getChannelData(0), this.beatSec, instrument);
-        melody.forEach((atom) => {
-            sp.setBuffer(atom.start, [atom.level], atom.length);
-        })
-        var source = audioContext.createBufferSource();
-        source.onended = onEnded;
-        source.buffer = this.buffer;
-        source.connect(audioContext.destination);
-        source.start(0);
-        return () => source.stop();
+    getPlayer(level :number) :Player {
+        return this.players[level];
     }
 }
 
+// AudioBufferは、MDNによると
+// 「一般的には 45 秒未満の、断片的な音声を保持するために設計されています」
+// https://developer.mozilla.org/ja/docs/Web/API/AudioBuffer
+const lengthSec = 10;
+const sampleRate = audioContext.sampleRate;
 
-function support(context :AudioContext, bfArray :Float32Array, beatSec :number, instrument :Instrument) {
-    let aLevel = Math.pow(2, 1.0 / 12);
-    let singleBeat = beatSec * context.sampleRate
-    return {
-      context: context,
-      beatSec: beatSec,
-      setBuffer: function(start :number, levels :(number[]|null), beatCount :number) {
-        var len = this.beatSec * beatCount * this.context.sampleRate;
-        for (var i = 0; i < len; i ++) {
-          if (levels != null) {
-            var freqs = levels.map((level) => Math.pow(aLevel, level) * this.context.sampleRate * .0000003)
-            let bf = freqs.reduce((sum, freq) => sum + instrument(i, freq, len), 0);
-            bfArray[start * singleBeat + i] = (bfArray[start * singleBeat + i] || 0) + bf;
-          }
-        }
-      },
-    };
+// 位置音階分の音源データ
+// コンストラクタ評価完了時にはまだ音源はなにもない状態です。
+// コンストラクタの後、バックグラウンドで順次lengthSec秒分用意します(数秒かかってしまうため)
+export class Player {
+    private readonly level :number;
+    private readonly audioBuffer : AudioBuffer;
+    private readonly gain :number[];
+    private _stopper?:Stopper;
+
+    constructor(instrument :Instrument, level :number) {
+        this.level = level;
+        this.audioBuffer = new AudioBuffer({
+            length: lengthSec * sampleRate, sampleRate
+        });
+        writeBuffer(this.audioBuffer, level, lengthSec, sampleRate, instrument);
+        this.gain = instrument.gain;
+    }
+    play() :Stopper {
+        const audioBufferSource = new AudioBufferSourceNode(audioContext, {
+            buffer: this.audioBuffer,
+            loop: false,
+        });
+        const gainNode = new GainNode(audioContext);
+        const fadeoutGainNode = new GainNode(audioContext);
+        gainNode.gain.setValueCurveAtTime(
+             this.gain, audioContext.currentTime, 10);
+        audioBufferSource.connect(
+            gainNode
+        ).connect(
+            fadeoutGainNode
+        ).connect(
+            audioContext.destination
+        );
+        audioBufferSource.start(audioContext.currentTime);
+        const stopper = new Stopper(audioBufferSource, fadeoutGainNode);
+        this._stopper = stopper;
+        return stopper;
+    }
+    get stopper() :Stopper|undefined {
+        return this._stopper;
+    }
 }
-  
+
+/**
+ * バッファに音階ごとの波形データを設定します。
+ * 時間がかかる処理なので、１秒分ごとに分割して波形生成します。
+ */
+function writeBuffer(buffer :AudioBuffer, level :number, lengthSec :number, sampleRate :number, instrument :Instrument) {
+    const freq = Math.pow(aLevel, level) * sampleRate * (1/(2**22));
+    setTimeout(() => recursiveWriteBuffer(0), 0);
+
+    function recursiveWriteBuffer(sec :number) {
+        // 一部ブラウザ(firefox, safari?)のための、バッファからの取り直し
+        // (最初に再生したタイミングの波形データで、次からも再生されてしまう。
+        // バッファから取り直せば、最初はブツ切れでも次に再生するときには最後まで再生できる)
+        const bfArray = buffer.getChannelData(0);
+        for (let j = 0; j < sampleRate; j ++) {
+            const i = sec * sampleRate + j;
+            bfArray[i] = instrument(i, freq)
+                / freq / 10;  // 音階ごとの音量調整(高い音が比較的煩く感じる問題のワークアラウンド)
+        }
+        if (sec < lengthSec) {
+            setTimeout(() => recursiveWriteBuffer(sec + 1), 0);
+        }
+    }
+}
+
+export class Stopper {
+    private readonly audioBufferSource :AudioBufferSourceNode;
+    private readonly fadeoutGainNode :GainNode;
+    constructor(audioBufferSource :AudioBufferSourceNode, fadeoutGainNode :GainNode) {
+        this.audioBufferSource = audioBufferSource;
+        this.fadeoutGainNode = fadeoutGainNode;
+    }
+    stop() {
+        this.fadeoutGainNode.gain.setValueCurveAtTime(
+            [1,0], audioContext.currentTime, .1);
+        this.audioBufferSource.stop(audioContext.currentTime + .2);
+    }
+}

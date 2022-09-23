@@ -1,0 +1,48 @@
+div.name_plate {
+    display: inline;
+    text-align: center;
+    font-size: large;
+    .title_plate {
+        margin: 0.2em;
+        width: 20em;
+        border-style: solid;
+        &:read-only {
+            border-color: white;
+            width: 5em;
+        }
+        &.error {
+            animation: input_error .5s ease 0s;
+        }
+        @keyframes input_error{
+            0% {
+                border-color: rgba(255,0,0,1);
+                transform: translateX(0px);
+            }
+            20% {
+                transform: translateX(3px);
+            }
+            40% {
+                transform: translateX(-3px);
+            }
+            60% {
+                transform: translateX(3px);
+            }
+            80% {
+                transform: translateX(-3px);
+            }
+            100% {
+                transform: translateX(0px);
+                border-color: rgba(255,0,0,1);
+            }
+          }
+    }
+    label {
+        vertical-align: bottom;
+        svg {
+            width: 1em;
+            height: 1em;
+            display: inline;
+            cursor: pointer;
+        }
+    }
+}
