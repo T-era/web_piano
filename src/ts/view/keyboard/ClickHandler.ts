@@ -16,12 +16,15 @@ function initKeyboardClickHandler(scoreModel :ScoreModel) {
     levelAll.forEach((level) => {
         const svgG = document.getElementById(keyboardId(level)) as Element as SVGGElement;
         let stopper :Stopper|undefined = undefined;
-        svgG.addEventListener('mousedown', () => {
+        svgG.addEventListener('pointerdown', () => {
             const player = soundContext.getPlayer(scoreModel.musicSetting, level);
             stopper = player.play();
             scoreModel.putSilentAt(level);
         });
-        svgG.addEventListener('mouseup', () => {
+        svgG.addEventListener('pointercancel', () => {
+            stopper?.stop();
+        });
+        svgG.addEventListener('pointerup', () => {
             stopper?.stop();
         });
     })
