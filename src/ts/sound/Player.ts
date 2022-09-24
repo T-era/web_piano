@@ -1,5 +1,6 @@
 import { Instrument } from "./instruments";
 import { aLevel, audioContext } from "../base";
+import { Stopper } from "./Stopper";
 
 // 各音階の音源データを用意します。
 export class PlayerSet {
@@ -18,7 +19,7 @@ export class PlayerSet {
 // AudioBufferは、MDNによると
 // 「一般的には 45 秒未満の、断片的な音声を保持するために設計されています」
 // https://developer.mozilla.org/ja/docs/Web/API/AudioBuffer
-const lengthSec = 10;
+export const bufferLengthSec = 10;
 const sampleRate = audioContext.sampleRate;
 
 // 位置音階分の音源データ
@@ -28,14 +29,15 @@ export class Player {
     private readonly level :number;
     private readonly audioBuffer : AudioBuffer;
     private readonly gain :number[];
-    private _stopper?:Stopper;
+    private _stopper :Stopper[] = [];
+    private _stopperCanceler?:NodeJS.Timeout;
 
     constructor(instrument :Instrument, level :number) {
         this.level = level;
         this.audioBuffer = new AudioBuffer({
-            length: lengthSec * sampleRate, sampleRate
+            length: bufferLengthSec * sampleRate, sampleRate
         });
-        writeBuffer(this.audioBuffer, level, lengthSec, sampleRate, instrument);
+        writeBuffer(this.audioBuffer, level, bufferLengthSec, sampleRate, instrument);
         this.gain = instrument.gain;
     }
     play() :Stopper {
@@ -56,10 +58,16 @@ export class Player {
         );
         audioBufferSource.start(audioContext.currentTime);
         const stopper = new Stopper(audioBufferSource, fadeoutGainNode);
-        this._stopper = stopper;
+
+        this.addStopper(stopper);
         return stopper;
     }
-    get stopper() :Stopper|undefined {
+    addStopper(stopper :Stopper) {
+        this._stopper = this._stopper.filter(item => item.isAlive)
+            .concat([stopper]);
+    }
+    get stopper() :Stopper[] {
+        this._stopper = this._stopper.filter(item => item.isAlive);
         return this._stopper;
     }
 }
@@ -85,19 +93,5 @@ function writeBuffer(buffer :AudioBuffer, level :number, lengthSec :number, samp
         if (sec < lengthSec) {
             setTimeout(() => recursiveWriteBuffer(sec + 1), 0);
         }
-    }
-}
-
-export class Stopper {
-    private readonly audioBufferSource :AudioBufferSourceNode;
-    private readonly fadeoutGainNode :GainNode;
-    constructor(audioBufferSource :AudioBufferSourceNode, fadeoutGainNode :GainNode) {
-        this.audioBufferSource = audioBufferSource;
-        this.fadeoutGainNode = fadeoutGainNode;
-    }
-    stop() {
-        this.fadeoutGainNode.gain.setValueCurveAtTime(
-            [1,0], audioContext.currentTime, .1);
-        this.audioBufferSource.stop(audioContext.currentTime + .2);
     }
 }

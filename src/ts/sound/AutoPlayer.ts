@@ -1,4 +1,4 @@
-import { ScoreItem } from "../base"
+import { levelAll, ScoreItem } from "../base"
 import { ScoreModel } from "../model/ScoreModel";
 import { soundContext } from "./SoundContext";
 
@@ -36,7 +36,15 @@ export class AutomationPlayer {
         });
         if (! this.stopRequested && this.endRow > row) {
             if (this.withRec) {
-                this.scoreModel.setSelectedRow(row + 1, true); 
+                // 長音を記録する
+                const levelsContinue = soundContext.getLevelsContine(this.scoreModel.musicSetting);
+                levelsContinue.forEach(level => {
+                    if (this.scoreItems[row][level] !== ScoreItem.Start) {
+                        this.scoreModel.replaceScore(row, level, ScoreItem.Continue)
+                    }
+                });
+
+                this.scoreModel.setSelectedRow(row, true); 
             }
             setTimeout(()=>this.automationPlayAt(row+1), this.beatSpeed * 1000);
         } else {

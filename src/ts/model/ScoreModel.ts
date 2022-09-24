@@ -1,5 +1,5 @@
 import { ActionChain, WithListener } from "../Listener";
-import { newScoreRow, ScoreItem, scoreSheetRowHeight } from "../base";
+import { levelAll, newScoreRow, ScoreItem, scoreSheetRowHeight } from "../base";
 import { SoundContext } from "../sound";
 import { MusicSetting } from "./MusicSetting";
 
@@ -117,12 +117,29 @@ export class ScoreModel {
     insertARowBefore(rownum :number) {
         const before = this.scoreItems.slice(0, rownum);
         const after = this.scoreItems.slice(rownum);
+        // afterの先頭がcontinueの場合、newScoreRowもcontinueにする
+        const afterHead = after[0] || [];
+        const newRow = newScoreRow();
+        levelAll.forEach((level) => {
+            if (afterHead[level] === ScoreItem.Continue) {
+                newRow[level] = ScoreItem.Continue;
+            }
+        });
 
-        this.resetAllRows(before.concat([newScoreRow(), ...after]));
+        this.resetAllRows(before.concat([newRow, ...after]));
     }
     remveRow(rownum :number) {
         const before = this.scoreItems.slice(0, rownum);
         const after = this.scoreItems.slice(rownum + 1);
+        // afterの先頭がcontinueの場合、beforeの末尾とつじつま合わせをする
+        const afterHead = after[0] || [];
+        const beforeTail = before[before.length - 1] || [];
+        levelAll.forEach((level) => {
+            if (afterHead[level] === ScoreItem.Continue
+                && beforeTail[level] === ScoreItem.None) {
+                afterHead[level] = ScoreItem.Start;
+            }
+        });
 
         this.resetAllRows(before.concat(after));
     }
@@ -138,20 +155,33 @@ export class ScoreModel {
     }
     clearLine() {
         const row = this.scoreItems[this.selectedRow];
-        const nextRow = this.scoreItems[this.selectedRow + 1] || [];
-        const listeners = this.itemListeners[this.selectedRow];
-        const nextListeners = this.itemListeners[this.selectedRow + 1];
         row.forEach((scoreItem, index) => {
             if (scoreItem !== ScoreItem.None) {
-                row[index] = ScoreItem.None;
-                listeners[index].fire(ScoreItem.None);
-                if (nextRow[index] === ScoreItem.Continue) {
-                    nextRow[index] = ScoreItem.Start;
-                    nextListeners[index].fire(ScoreItem.Start);
-                }
+                this.replaceScore(this.selectedRow, index, ScoreItem.None);
             }
         });
     }
+    replaceScore(row :number, level :number, scoreItem?:ScoreItem) {
+        const findToBe = () => {
+            const currentItem = this.scoreItems[row][level];
+            return (currentItem === ScoreItem.None
+                ? ScoreItem.Start
+                : currentItem === ScoreItem.Continue
+                    ? ScoreItem.None
+                    : (this.scoreItems[row - 1] && this.scoreItems[row - 1][level] !== ScoreItem.None)
+                        ? ScoreItem.Continue
+                        : ScoreItem.None);
+        }
+
+        const toBe = scoreItem || findToBe();
+        this.scoreItems[row][level] = toBe;
+        this.itemListeners[row][level].fire(toBe);
+        if (toBe === ScoreItem.None && this.scoreItems[row + 1] && this.scoreItems[row + 1][level] === ScoreItem.Continue) {
+            this.scoreItems[row + 1][level] = ScoreItem.Start;
+            this.itemListeners[row + 1][level].fire(ScoreItem.Start);
+        }
+    }
+
     get musicSetting() :MusicSetting {
         return this._musicSetting;
     }
@@ -171,20 +201,5 @@ export class ScoreModel {
     private scrollToRow(row :number) {
         this.sheetDiv.scrollTo(0, (row - 3) * scoreSheetRowHeight);
     }
-    private replaceScore(row :number, level :number) {
-        const currentItem = this.scoreItems[row][level];
-        const toBe = (currentItem === ScoreItem.None
-                ? ScoreItem.Start
-                : currentItem === ScoreItem.Continue
-                    ? ScoreItem.None
-                    : (this.scoreItems[row - 1] && this.scoreItems[row - 1][level] !== ScoreItem.None)
-                        ? ScoreItem.Continue
-                        : ScoreItem.None);
-        this.scoreItems[row][level] = toBe;
-        this.itemListeners[row][level].fire(toBe);
-        if (toBe === ScoreItem.None && this.scoreItems[row + 1] && this.scoreItems[row + 1][level] === ScoreItem.Continue) {
-            this.scoreItems[row + 1][level] = ScoreItem.Start;
-            this.itemListeners[row + 1][level].fire(ScoreItem.Start);
-        }
-    }
 }
+ 

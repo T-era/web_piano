@@ -1,3 +1,4 @@
+import { levelAll } from "../base";
 import { MusicSetting } from "../model/MusicSetting";
 import { Player, PlayerSet } from "./Player";
 
@@ -12,6 +13,21 @@ export class SoundContext {
             this.playerByInstrument[instrumentName] = new PlayerSet(musicSetting.instrument)
         }
         return this.playerByInstrument[instrumentName].getPlayer(level);
+    }
+    getLevelsContine(musicSetting :MusicSetting) :number[] {
+        return levelAll.map(
+            level => {
+                return {
+                    level,
+                    player: soundContext.getPlayer(musicSetting, level),
+                };
+            }
+        ).filter(
+            lp => lp.player.stopper.length > 0
+        ).map(
+            lp => lp.level
+        );
+
     }
 }
 
