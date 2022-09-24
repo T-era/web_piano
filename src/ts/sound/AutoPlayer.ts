@@ -13,7 +13,7 @@ export class AutomationPlayer {
     private readonly doneThen :()=>void;
     private readonly endRow :number;
     private readonly withRec :boolean;
-    private readonly beatSpeed :number;
+    private readonly beatSpeedMSec :number;
     private stopRequested = false;
 
     constructor(scoreModel :ScoreModel, doneThen :()=>void, option?:Option) {
@@ -21,7 +21,7 @@ export class AutomationPlayer {
         this.scoreModel = scoreModel;
         this.scoreItems = scoreModel.scoreItems;
         this.doneThen = doneThen;
-        this.beatSpeed = scoreModel.musicSetting.beatSpeed;
+        this.beatSpeedMSec = scoreModel.musicSetting.beatSpeed * 1000;
         this.endRow = endRow === undefined ? this.scoreItems.length - 1 : endRow;
         this.withRec = withRec;
 
@@ -32,23 +32,26 @@ export class AutomationPlayer {
         const nextSound = soundFromScores(row, this.scoreItems);
         nextSound.forEach(aSound => {
             const stopper = soundContext.getPlayer(this.scoreModel.musicSetting, aSound.level).play();
-            setTimeout(() => stopper.stop(), aSound.length * this.beatSpeed * 1000);
+            setTimeout(() => stopper.stop(), aSound.length * this.beatSpeedMSec);
         });
-        if (! this.stopRequested && this.endRow > row) {
-            if (this.withRec) {
-                // 長音を記録する
-                const levelsContinue = soundContext.getLevelsContine(this.scoreModel.musicSetting);
-                levelsContinue.forEach(level => {
-                    if (this.scoreItems[row][level] !== ScoreItem.Start) {
-                        this.scoreModel.replaceScore(row, level, ScoreItem.Continue)
-                    }
-                });
+        if (this.withRec) {
+            // 長音を記録する
+            const levelsContinue = soundContext.getLevelsContine(this.scoreModel.musicSetting);
+            levelsContinue.forEach(level => {
+                if (this.scoreItems[row][level] !== ScoreItem.Start) {
+                    this.scoreModel.replaceScore(row, level, ScoreItem.Continue)
+                }
+            });
 
-                this.scoreModel.setSelectedRow(row, true); 
+            this.scoreModel.setSelectedRow(row, true); 
+            if (this.endRow <= row) {
+                this.scoreModel.addNewRow();
             }
-            setTimeout(()=>this.automationPlayAt(row+1), this.beatSpeed * 1000);
-        } else {
+        }
+        if (this.stopRequested || (! this.withRec && this.endRow <= row)) {
             this.doneThen();
+        } else {
+            setTimeout(()=>this.automationPlayAt(row+1), this.beatSpeedMSec);
         }
     }
     requestStop() {

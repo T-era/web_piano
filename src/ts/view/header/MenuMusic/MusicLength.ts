@@ -11,7 +11,7 @@ export function menuMusicLengthInit(scoreModel :ScoreModel) {
 
 
     function init() {
-        musicLengthInput.addEventListener('change', (e) => {
+        musicLengthInput.addEventListener('input', (e) => {
             const newRowCount = musicLengthInput.valueAsNumber;
             const currentRowCount = rowCount();
             if (newRowCount === currentRowCount) {
@@ -27,7 +27,6 @@ export function menuMusicLengthInit(scoreModel :ScoreModel) {
                 show(musicLengthCancel);
                 musigLengthNotice.innerText = '';
             }
-
         });
         musicLengthOk.addEventListener('click', () => {
             const newRowCount = musicLengthInput.valueAsNumber;
