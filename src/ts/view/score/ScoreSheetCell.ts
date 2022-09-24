@@ -1,6 +1,6 @@
 import { keyboardShiftWidth, scoreButtonWidth, ScoreItem, scoreSheetRowHeight } from '../../base';
 import { ScoreModel } from '../../model/ScoreModel';
-import { SvgG, SvgPath, SvgRect } from '../components/SvgTags';
+import { SvgG, SvgPath, SvgRect } from '../components/svg_tags';
 
 function fillColor(distance :number) :string {
     const f = Math.floor;

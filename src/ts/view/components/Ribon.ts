@@ -1,3 +1,5 @@
+import { createDom } from "./html_tags";
+
 interface RibonMenuItem {
     title :HTMLElement;
     contents :HTMLElement;
@@ -6,24 +8,29 @@ interface RibonMenuItem {
 interface RibonMenuParams {
     parentDom: HTMLElement;
     menuItems :RibonMenuItem[];
-    ribonClass?:string;
+    ribonClass?:string[];
 }
 export default function RibonMenu(params :RibonMenuParams) {
-    let ribonDiv = document.createElement('div');
-    ribonDiv.classList.add('ribon')
-    if (params.ribonClass) ribonDiv.classList.add(params.ribonClass);
-    params.parentDom.appendChild(ribonDiv);
+    const { parentDom, menuItems, ribonClass = [] } = params;
+    const ribonDiv = createDom('div', {
+        classNames: ['ribon', ...ribonClass],
+        parent: parentDom,
+    });
+    parentDom.appendChild(ribonDiv);
 
-    let ribonHeaderDiv = document.createElement('div');
-    ribonHeaderDiv.classList.add('ribon_header');
-    ribonDiv.appendChild(ribonHeaderDiv);
+    let ribonHeaderDiv = createDom('div', {
+        classNames: ['ribon_header'],
+        parent: ribonDiv,
+    });
 
-    let ribonHr = document.createElement('hr');
-    ribonDiv.appendChild(ribonHr);
+    createDom('hr', {
+        parent: ribonDiv,
+    });
 
-    let ribonContentDiv = document.createElement('div');
-    ribonContentDiv.classList.add('ribon_content');
-    ribonDiv.appendChild(ribonContentDiv);
+    let ribonContentDiv = createDom('div', {
+        classNames: ['ribon_content'],
+        parent: ribonDiv,
+    });
 
     for (let item of params.menuItems) {
         showItemsAsMenuPair(item, ribonHeaderDiv, ribonContentDiv, params.menuItems);

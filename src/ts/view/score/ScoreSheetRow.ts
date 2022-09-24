@@ -1,7 +1,7 @@
 import { levelAll, levelWidth, octaveWidth, scoreButtonWidth, scoreSheetRowHeight } from "../../base";
 import { ScoreModel } from "../../model/ScoreModel";
 import { SoundContext } from "../../sound";
-import { SvgG, SvgRect } from "../components/SvgTags";
+import { SvgG, SvgRect } from "../components/svg_tags";
 import CurrentRowMark from "./CurrentRowMark";
 import { NoteMark } from "./NoteMark";
 import { AddPrevRowButton, RemoveRowButton } from "./RowControl";

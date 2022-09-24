@@ -1,5 +1,5 @@
 import { scoreSheetRowHeight, scoreSideButtonWidth } from '../../base';
-import { SvgG, SvgPath, SvgRect } from '../components/SvgTags';
+import { SvgG, SvgPath, SvgRect } from '../components/svg_tags';
 
 const arrow_width = scoreSideButtonWidth - 2;
 const arrow_height = scoreSheetRowHeight - 2;

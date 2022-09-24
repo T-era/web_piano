@@ -1,4 +1,5 @@
 import { MusicSetting } from "../../../model/MusicSetting";
+import { createDom } from "../../components/html_tags";
 
 const instrumentSelect = document.getElementById('instrument_select') as HTMLSelectElement;
 
@@ -11,7 +12,7 @@ export function menuMusicInstrumentInit(musicSetting :MusicSetting) {
 
     function init() {
         musicSetting.instrumentNameAll().forEach(title => {
-            const optionElm = document.createElement('option');
+            const optionElm = createDom('option');
             optionElm.value = title;
             optionElm.innerText = title;
             instrumentSelect?.appendChild(optionElm);

@@ -30,7 +30,6 @@ export class Player {
     private readonly audioBuffer : AudioBuffer;
     private readonly gain :number[];
     private _stopper :Stopper[] = [];
-    private _stopperCanceler?:NodeJS.Timeout;
 
     constructor(instrument :Instrument, level :number) {
         this.level = level;

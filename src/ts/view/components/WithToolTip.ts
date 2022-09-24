@@ -1,14 +1,18 @@
 // ラベル側に .tooltip_label クラスを指定します。
 // ツールチップになる側に .tooltip_content クラスを指定します。
 // またラベル側のDOM要素のプロパティ -tooltip_content を
+
+import { createDom } from "./html_tags";
+
 // 設定して、ツールチップになる側のDOMのIDを指定します。
 export const eventToolTipClose = 'close_tooltip_all';
 
 export function initToolTip() {
     const toolTipLabelList = document.getElementsByClassName('tooltip_label');
-    const modalBg = document.createElement('div');
-    modalBg.classList.add('tooltip_background');
-    modalBg.setAttribute('hidden', 'hidden');
+    const modalBg = createDom('div', {
+        classNames: ['tooltip_background'],
+        isHidden: true,
+    });
     modalBg.addEventListener('click',  closeToolTip);
     document.addEventListener('close_tooltip_all', closeToolTip)
     document.getElementById('__background')?.appendChild(modalBg);

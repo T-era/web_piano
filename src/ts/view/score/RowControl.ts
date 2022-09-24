@@ -1,5 +1,5 @@
 import { octaves, octaveWidth, scoreButtonWidth, scoreSheetRowHeight } from "../../base";
-import { SvgCircle, SvgG, SvgLine, SvgPath, SvgRect } from "../components/SvgTags";
+import { SvgCircle, SvgG, SvgLine, SvgPath, SvgRect } from "../components/svg_tags";
 
 const cxAdd = scoreButtonWidth * 2.5 + octaveWidth * octaves;
 const dcyAdd = 0;

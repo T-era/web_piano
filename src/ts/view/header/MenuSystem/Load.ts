@@ -2,6 +2,7 @@ import lsio from "../../../model/io/LocalStorageIo";
 import { scoresFromMelody } from "../../../model/io/util";
 import { MusicSetting } from "../../../model/MusicSetting";
 import { ScoreModel } from "../../../model/ScoreModel";
+import { createDom } from "../../components/html_tags";
 import { eventToolTipClose } from "../../components/WithToolTip";
 
 export function initSystemLoad(scoreModel :ScoreModel) {
@@ -37,7 +38,7 @@ export function initSystemLoad(scoreModel :ScoreModel) {
 
     function addAllOption(fileNames :string[]) {
         fileNames.forEach((fileName) => {
-            const option = document.createElement('option');
+            const option = createDom('option');
             option.value = fileName;
             option.innerText = fileName;
             fileSelect.appendChild(option);

@@ -1,5 +1,5 @@
 import { scoreButtonWidth, scoreSheetRowHeight } from "../../base";
-import { SvgG, SvgPath, SvgRect } from "../components/SvgTags";
+import { SvgG, SvgPath, SvgRect } from "../components/svg_tags";
 
 type HowToStop = ()=>void;
 interface Props {

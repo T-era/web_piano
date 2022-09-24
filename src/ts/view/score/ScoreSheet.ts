@@ -1,7 +1,7 @@
 import { keyboardShiftWidth, octaveWidth, scoreButtonWidth, scoreSheetRowHeight } from "../../base";
 import { ScoreModel } from "../../model/ScoreModel";
 import { soundContext } from "../../sound";
-import { SvgG, SvgLine } from "../components/SvgTags";
+import { SvgG, SvgLine } from "../components/svg_tags";
 import { ScoreSheetRow } from "./ScoreSheetRow";
 
 export class ScoreSheet {
