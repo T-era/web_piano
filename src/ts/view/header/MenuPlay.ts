@@ -1,5 +1,6 @@
 import { scoreSheetRowHeight } from "../../base";
-import { ScoreModel } from "../../model/ScoreModel";
+import { ScoreModel } from "../../model/score";
+import { RecMode } from "../../model/score/RecModeControl";
 import { AutomationPlayer } from "../../sound";
 
 type Suspender = ()=>void;
@@ -33,7 +34,7 @@ export function menuPlayInit(scoreModel :ScoreModel) {
         return () => ap.requestStop();
     }));
     rec.addEventListener('click', playIfCan(() => {
-        const ap = new AutomationPlayer(scoreModel, stopped, { withRec: true });
+        const ap = new AutomationPlayer(scoreModel, stopped, { recMode: new RecMode(scoreModel) });
         return () => ap.requestStop();
     }))
     suspend.addEventListener('click',  () => {

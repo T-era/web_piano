@@ -2,7 +2,7 @@
 // ツールチップになる側に .tooltip_content クラスを指定します。
 // またラベル側のDOM要素のプロパティ -tooltip_content を
 
-import { createDom } from "./html_tags";
+import { createDom, hide, show } from "./html_tags";
 
 // 設定して、ツールチップになる側のDOMのIDを指定します。
 export const eventToolTipClose = 'close_tooltip_all';
@@ -27,7 +27,7 @@ export function initToolTip() {
             toolTipContent.setAttribute('hidden', 'hidden');
             toolTipLabel.addEventListener('click',  () => {
                 toolTipContent.removeAttribute('hidden');
-                modalBg.removeAttribute('hidden');
+                show(modalBg);
                 // ラベルをもとに、ツールチップの位置を決定します。
                 const buttonLeftPos = toolTipLabel.offsetLeft || 0;
                 const buttonWidth = toolTipLabel.offsetWidth || 0;
@@ -43,7 +43,7 @@ export function initToolTip() {
         }
     });
     function closeToolTip() {
-        modalBg.setAttribute('hidden', 'hidden');
+        hide(modalBg);
         modalBg.childNodes.forEach(child => (child as HTMLElement).setAttribute('hidden', 'hidden'))
     }
 }

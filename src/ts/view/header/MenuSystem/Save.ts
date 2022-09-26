@@ -1,7 +1,6 @@
 import lsio from "../../../model/io/LocalStorageIo";
 import { atomsFromScores } from "../../../model/io/util";
-import { MusicSetting } from "../../../model/MusicSetting";
-import { ScoreModel } from "../../../model/ScoreModel";
+import { ScoreModel } from "../../../model/score";
 import { eventToolTipClose } from "../../components/WithToolTip";
 
 export function initSystemSave(scoreModel :ScoreModel) {
@@ -17,7 +16,7 @@ export function initSystemSave(scoreModel :ScoreModel) {
         nameplate.classList.remove('error');
         const fileName = nameplate.value;
         if (fileName) {
-            const saveData = atomsFromScores(scoreModel.scoreItems);
+            const saveData = atomsFromScores(scoreModel.scoreItemCopy);
             lsio.save(fileName, {
                 melody: saveData,
                 instrumentName: musicSetting.instrumentName,
@@ -26,6 +25,8 @@ export function initSystemSave(scoreModel :ScoreModel) {
             document.dispatchEvent(new CustomEvent(eventToolTipClose));
         } else {
             // 名前未入力エラー表示
+            // setTimeout でタイミングを遅らせているのは、(このタイミングで設定すると)remove('error')と同時になり
+            // クラス指定が変化していないと判断されてしまい、CSSアニメーションが発生しないため
             setTimeout(() => nameplate.classList.add('error'), 0);
         }
     });

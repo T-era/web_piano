@@ -1,5 +1,5 @@
 import { keyboardShiftWidth, scoreButtonWidth, ScoreItem, scoreSheetRowHeight } from '../../base';
-import { ScoreModel } from '../../model/ScoreModel';
+import { ScoreModel } from '../../model/score';
 import { SvgG, SvgPath, SvgRect } from '../components/svg_tags';
 
 function fillColor(distance :number) :string {
@@ -17,7 +17,7 @@ interface Props {
     onClicked :(row:number, level:number) => void;
 }
 
-function seekDistanceFromStart(scoreContents :ScoreItem[][], row :number, level :number) :number {
+function seekDistanceFromStart(scoreContents :ReadonlyArray<ReadonlyArray<ScoreItem>>, row :number, level :number) :number {
     let distance = 0;
     let r = row;
     while (scoreContents[r] && scoreContents[r][level] === ScoreItem.Continue) {
@@ -62,14 +62,15 @@ export class ScoreSheetCell extends SvgG {
         this.levelAt = levelAt;
         this.svgRect = cellRect;
         this.svgPathContinuation = continuePath;
-        scoreModel.addActionListener(rowAt, levelAt, () => {
+        scoreModel.addScoreItemListener(rowAt, levelAt, () => {
             this.reshow();
         })
         this.reshow();
     }
 
     reshow() {
-        const itemAt = this.scoreModel.scoreItems[this.rowAt][this.levelAt];
+        const copy = this.scoreModel.scoreItemCopy;
+        const itemAt = copy[this.rowAt][this.levelAt];
         if (itemAt !== undefined) {
             const rawRect = this.svgRect.elm;
             if (itemAt === ScoreItem.None) {
@@ -79,7 +80,7 @@ export class ScoreSheetCell extends SvgG {
             } else {
                 rawRect.classList.add('fill');
                 rawRect.classList.remove('empty');
-                const distance = seekDistanceFromStart(this.scoreModel.scoreItems, this.rowAt, this.levelAt);
+                const distance = seekDistanceFromStart(copy, this.rowAt, this.levelAt);
                 const color = fillColor(distance);
                 rawRect.setAttribute('fill', color);
             }

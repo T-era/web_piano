@@ -3,9 +3,9 @@ import { initClickHandler } from './view/keyboard/ClickHandler';
 import { KeyboardContext } from './view/keyboard/KeyboardContext';
 import { headerInit } from './view/header';
 import { ScoreSheet } from './view/score/ScoreSheet';
-import { ScoreModel } from './model/ScoreModel';
+import { ScoreModel } from './model/score';
 import { soundContext } from './sound';
-import { ScoreModelKeyListener } from './model/ScoreModelKeyListener';
+import { ScoreModelKeyListener } from './model/score';
 import { initToolTip } from './view/components/WithToolTip';
 import { MusicSetting } from './model/MusicSetting';
 

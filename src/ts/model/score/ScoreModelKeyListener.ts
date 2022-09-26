@@ -7,13 +7,13 @@ export class ScoreModelKeyListener {
     }
     onKeypressed(e :KeyboardEvent) {
         if (e.key === 'Enter') {
-            this.scoreModel.addNewRow(! e.shiftKey);
+            this.scoreModel.control.addNewRow(! e.shiftKey);
         } else if (e.key === 'ArrowUp') {
-            this.scoreModel.scrollUp();
+            this.scoreModel.control.scrollUp();
         } else if (e.key === 'ArrowDown') {
-            this.scoreModel.scrollDown();
+            this.scoreModel.control.scrollDown();
         } else if (e.key === ' ') {
-            this.scoreModel.continueRow();
+            this.scoreModel.control.continueRow();
         }
     }
 }

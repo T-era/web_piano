@@ -1,5 +1,5 @@
 import { keyboardShiftWidth, octaveWidth, scoreButtonWidth, scoreSheetRowHeight } from "../../base";
-import { ScoreModel } from "../../model/ScoreModel";
+import { ScoreModel } from "../../model/score";
 import { soundContext } from "../../sound";
 import { SvgG, SvgLine } from "../components/svg_tags";
 import { ScoreSheetRow } from "./ScoreSheetRow";
@@ -64,8 +64,8 @@ export class ScoreSheet {
             parent: this.scoresGrid,
             rowAt: this.rowCount,
             soundContext: soundContext,
-            rowAdding: (row) => this.scoreModel.insertARowBefore(row),  
-            rowRemoving: (row) => this.scoreModel.remveRow(row)
+            rowAdding: (row) => this.scoreModel.control.insertARowBefore(row),  
+            rowRemoving: (row) => this.scoreModel.control.remveRow(row)
         }));
         this.rowCount ++;
         const hLine = horizontalLine(this.gGrid, this.rowCount);

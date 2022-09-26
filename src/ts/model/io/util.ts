@@ -31,7 +31,7 @@ export function scoresFromMelody(melody :Atom[]) :ScoreItem[][] {
     })
     return ret;
 }
-export function atomsFromScores(scoreContents :ScoreItem[][]) :Atom[] {
+export function atomsFromScores(scoreContents :ReadonlyArray<ReadonlyArray<ScoreItem>>) :Atom[] {
     const ret :Atom[] = [];
     scoreContents.forEach((line, start) => {
         line.forEach((scoreItem, level) => {

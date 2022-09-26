@@ -1,29 +1,39 @@
-import { levelAll, ScoreItem } from "../base"
-import { ScoreModel } from "../model/ScoreModel";
+import { ScoreItem } from "../base"
+import { ScoreItemsRef } from "../model/score";
+import { ScoreModel } from "../model/score";
+import { RecMode } from "../model/score/RecModeControl";
 import { soundContext } from "./SoundContext";
 
-interface Option {
+interface OptionPlay {
     startRow?:number;
     endRow?:number;
-    withRec?:boolean
 }
+interface OptionRec {
+    startRow?:number;
+    recMode?:RecMode
+}
+type Option = OptionPlay | OptionRec;
+
 export class AutomationPlayer {
     private readonly scoreModel :ScoreModel;
-    private readonly scoreItems :ScoreItem[][];
+    private readonly scoreItems :ScoreItemsRef;
     private readonly doneThen :()=>void;
     private readonly endRow :number;
-    private readonly withRec :boolean;
+    private readonly recMode?:RecMode;
     private readonly beatSpeedMSec :number;
     private stopRequested = false;
 
-    constructor(scoreModel :ScoreModel, doneThen :()=>void, option?:Option) {
-        const {startRow = 0, endRow, withRec = false } = option || {};
+    constructor(scoreModel :ScoreModel, doneThen :()=>void, opt?:Option) {
+        const option = opt || {};
+        const {startRow = 0 } = option;
+        const endRow = ('endRow' in option ? option.endRow : undefined);
+        const recMode = ('recMode' in option ? option.recMode : undefined);
         this.scoreModel = scoreModel;
         this.scoreItems = scoreModel.scoreItems;
         this.doneThen = doneThen;
         this.beatSpeedMSec = scoreModel.musicSetting.beatSpeed * 1000;
-        this.endRow = endRow === undefined ? this.scoreItems.length - 1 : endRow;
-        this.withRec = withRec;
+        this.endRow = endRow ?? this.scoreItems.length - 1;
+        this.recMode = recMode;
 
         setTimeout(()=>this.automationPlayAt(startRow), 0);
     }
@@ -34,21 +44,11 @@ export class AutomationPlayer {
             const stopper = soundContext.getPlayer(this.scoreModel.musicSetting, aSound.level).play();
             setTimeout(() => stopper.stop(), aSound.length * this.beatSpeedMSec);
         });
-        if (this.withRec) {
+        if (this.recMode) {
             // 長音を記録する
-            const levelsContinue = soundContext.getLevelsContine(this.scoreModel.musicSetting);
-            levelsContinue.forEach(level => {
-                if (this.scoreItems[row][level] !== ScoreItem.Start) {
-                    this.scoreModel.replaceScore(row, level, ScoreItem.Continue)
-                }
-            });
-
-            this.scoreModel.setSelectedRow(row, true); 
-            if (this.endRow <= row) {
-                this.scoreModel.addNewRow();
-            }
+            this.recMode.record(row);
         }
-        if (this.stopRequested || (! this.withRec && this.endRow <= row)) {
+        if (this.stopRequested || (! this.recMode && this.endRow <= row)) {
             this.doneThen();
         } else {
             setTimeout(()=>this.automationPlayAt(row+1), this.beatSpeedMSec);
@@ -64,13 +64,13 @@ interface ASound {
     length :number;
 }
 
-function soundFromScores(row :number, scoreItems :ScoreItem[][]) :ASound[] {
+function soundFromScores(row :number, scoreItems :ScoreItemsRef) :ASound[] {
     const nextRow = scoreItems[row];
     return nextRow.map((_, level) => {
         return { level, length: lengthCount(level) }
     }).filter(aSound => aSound.length > 0)
     function lengthCount(level :number) :number {
-        if (scoreItems[row][level] === ScoreItem.Start) {
+        if (scoreItems[row][level].value === ScoreItem.Start) {
             return lengthContinue(1, level, row + 1);
         } else {
             return 0;
@@ -80,7 +80,7 @@ function soundFromScores(row :number, scoreItems :ScoreItem[][]) :ASound[] {
         if (scoreItems.length === row) {
             return counter;
         }
-        if (scoreItems[row][level] === ScoreItem.Continue) {
+        if (scoreItems[row][level].value === ScoreItem.Continue) {
             return lengthContinue(counter + 1, level, row + 1);
         } else {
             return counter;

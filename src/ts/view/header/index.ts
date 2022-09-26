@@ -1,4 +1,4 @@
-import { ScoreModel } from "../../model/ScoreModel";
+import { ScoreModel } from "../../model/score";
 import RibonMenu from "../components/Ribon";
 import { menuClearInit } from "./MenuClear";
 import { menuMusicInit, refreshMenuMusic } from "./MenuMusic";

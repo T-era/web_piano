@@ -1,5 +1,5 @@
 import { scoresFromMelody, importFromJson } from "../../../model/io/util";
-import { ScoreModel } from "../../../model/ScoreModel";
+import { ScoreModel } from "../../../model/score";
 import { eventToolTipClose } from "../../components/WithToolTip";
 
 export function initSystemImport(scoreModel :ScoreModel) {
@@ -14,7 +14,7 @@ export function initSystemImport(scoreModel :ScoreModel) {
             const saveData = importFromJson(jsonStr);
     
             if(saveData) {
-                scoreModel.resetAllRows(scoresFromMelody(saveData.melody));
+                scoreModel.control.resetAllRows(scoresFromMelody(saveData.melody));
                 musicSetting.beatSpeed = saveData.beatSpeed;
                 musicSetting.setInstrument(saveData.instrumentName);
         

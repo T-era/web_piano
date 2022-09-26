@@ -1,6 +1,7 @@
 import { Instrument } from "./instruments";
-import { aLevel, audioContext } from "../base";
+import { audioContext } from "../base";
 import { Stopper } from "./Stopper";
+import { bufferData } from "./BufferData";
 
 // 各音階の音源データを用意します。
 export class PlayerSet {
@@ -33,10 +34,7 @@ export class Player {
 
     constructor(instrument :Instrument, level :number) {
         this.level = level;
-        this.audioBuffer = new AudioBuffer({
-            length: bufferLengthSec * sampleRate, sampleRate
-        });
-        writeBuffer(this.audioBuffer, level, bufferLengthSec, sampleRate, instrument);
+        this.audioBuffer = bufferData(instrument, level, bufferLengthSec);
         this.gain = instrument.gain;
     }
     play() :Stopper {
@@ -61,6 +59,10 @@ export class Player {
         this.addStopper(stopper);
         return stopper;
     }
+    playSec(sec :number) {
+        const stopper = this.play();
+        setTimeout(() => stopper.stop(), sec * 1000);
+    }
     addStopper(stopper :Stopper) {
         this._stopper = this._stopper.filter(item => item.isAlive)
             .concat([stopper]);
@@ -68,29 +70,5 @@ export class Player {
     get stopper() :Stopper[] {
         this._stopper = this._stopper.filter(item => item.isAlive);
         return this._stopper;
-    }
-}
-
-/**
- * バッファに音階ごとの波形データを設定します。
- * 時間がかかる処理なので、１秒分ごとに分割して波形生成します。
- */
-function writeBuffer(buffer :AudioBuffer, level :number, lengthSec :number, sampleRate :number, instrument :Instrument) {
-    const freq = Math.pow(aLevel, level) * sampleRate * (1/(2**22));
-    setTimeout(() => recursiveWriteBuffer(0), 0);
-
-    function recursiveWriteBuffer(sec :number) {
-        // 一部ブラウザ(firefox, safari?)のための、バッファからの取り直し
-        // (最初に再生したタイミングの波形データで、次からも再生されてしまう。
-        // バッファから取り直せば、最初はブツ切れでも次に再生するときには最後まで再生できる)
-        const bfArray = buffer.getChannelData(0);
-        for (let j = 0; j < sampleRate; j ++) {
-            const i = sec * sampleRate + j;
-            bfArray[i] = instrument(i, freq)
-                / freq / 10;  // 音階ごとの音量調整(高い音が比較的煩く感じる問題のワークアラウンド)
-        }
-        if (sec < lengthSec) {
-            setTimeout(() => recursiveWriteBuffer(sec + 1), 0);
-        }
     }
 }

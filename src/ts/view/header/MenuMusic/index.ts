@@ -1,5 +1,5 @@
 import { MusicSetting } from "../../../model/MusicSetting";
-import { ScoreModel } from "../../../model/ScoreModel";
+import { ScoreModel } from "../../../model/score";
 import { menuMusicBeatSpeedInit, refreshBeatSpeed } from "./MusicBeatSpeed";
 import { menuMusicInstrumentInit, refreshInstrument } from "./MusicInstrument";
 import { menuMusicLengthInit } from "./MusicLength";

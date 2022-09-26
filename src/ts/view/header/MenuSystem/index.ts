@@ -1,5 +1,4 @@
-import { MusicSetting } from "../../../model/MusicSetting";
-import { ScoreModel } from "../../../model/ScoreModel";
+import { ScoreModel } from "../../../model/score";
 import { initSystemExport } from "./Export";
 import { initSystemImport } from "./Import";
 import { initSystemLoad } from "./Load";

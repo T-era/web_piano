@@ -1,5 +1,5 @@
 import { levelAll } from "../../base";
-import { ScoreModel } from "../../model/ScoreModel";
+import { ScoreModel } from "../../model/score";
 import { soundContext } from "../../sound";
 import { Stopper } from "../../sound";
 import { KeyboardContext } from "./KeyboardContext";
@@ -19,7 +19,7 @@ function initKeyboardClickHandler(scoreModel :ScoreModel) {
         svgG.addEventListener('pointerdown', () => {
             const player = soundContext.getPlayer(scoreModel.musicSetting, level);
             stopper = player.play();
-            scoreModel.putSilentAt(level);
+            scoreModel.control.putScoreItemAt(level);
         });
         svgG.addEventListener('pointercancel', () => {
             stopper?.stop();

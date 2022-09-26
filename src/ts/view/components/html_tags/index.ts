@@ -18,10 +18,16 @@ export function createDom<K extends keyof HTMLElementTagNameMap>(tagName :K, pro
         ret.setAttribute(key, attributes[key]);
     }
     if (isHidden) {
-        ret.setAttribute('hidden', 'hidden');
+        hide(ret);
     }
     if (parent) {
         parent.appendChild(ret);
     }
     return ret;
+}
+export function show(target :HTMLElement) {
+    target.removeAttribute('hidden');
+}
+export function hide(target :HTMLElement) {
+    target.setAttribute('hidden', 'hidden');
 }

@@ -1,5 +1,5 @@
-import { levelAll, levelWidth, octaveWidth, scoreButtonWidth, scoreSheetRowHeight } from "../../base";
-import { ScoreModel } from "../../model/ScoreModel";
+import { levelAll, octaveWidth, scoreButtonWidth, scoreSheetRowHeight } from "../../base";
+import { ScoreModel } from "../../model/score";
 import { SoundContext } from "../../sound";
 import { SvgG, SvgRect } from "../components/svg_tags";
 import CurrentRowMark from "./CurrentRowMark";
@@ -55,7 +55,7 @@ export class ScoreSheetRow {
             }})
         );
         this.crmController = new CurrentRowMark({ y: props.rowAt * scoreSheetRowHeight, onClick: ()=> {
-            return scoreModel.setSelectedRow(this.rowAt, false);
+            return scoreModel.control.setSelectedRow(this.rowAt, false);
         } }).addTo(rowG);
 
         rowG.addAll(levelAll.map((level)=>{

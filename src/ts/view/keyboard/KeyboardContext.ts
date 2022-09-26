@@ -1,5 +1,5 @@
 import { levelAll, octaves } from "../../base";
-import { ScoreModel } from "../../model/ScoreModel";
+import { ScoreModel } from "../../model/score";
 import { soundContext, Stopper } from "../../sound";
 
 const whitekeyKeys = ['a','s','d','f','g','h','j','k','l',';',':',']'];
@@ -76,7 +76,7 @@ export class KeyboardContext {
             const stopper = player.play();
             this.keyBindStopper[key] = stopper;
 
-            this.scoreModel.putSilentAt(level);
+            this.scoreModel.control.putScoreItemAt(level);
         }
     }
     keyUpListener(e :KeyboardEvent) {

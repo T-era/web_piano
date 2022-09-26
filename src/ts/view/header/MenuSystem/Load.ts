@@ -1,7 +1,6 @@
 import lsio from "../../../model/io/LocalStorageIo";
 import { scoresFromMelody } from "../../../model/io/util";
-import { MusicSetting } from "../../../model/MusicSetting";
-import { ScoreModel } from "../../../model/ScoreModel";
+import { ScoreModel } from "../../../model/score";
 import { createDom } from "../../components/html_tags";
 import { eventToolTipClose } from "../../components/WithToolTip";
 
@@ -30,7 +29,7 @@ export function initSystemLoad(scoreModel :ScoreModel) {
             scoreModel.musicSetting.setInstrument(loadedData.instrumentName);
             scoreModel.musicSetting.beatSpeed = loadedData.beatSpeed;
             const newScoreItems = scoresFromMelody(loadedData.melody);
-            scoreModel.resetAllRows(newScoreItems);
+            scoreModel.control.resetAllRows(newScoreItems);
         }
         document.dispatchEvent(new CustomEvent(eventToolTipClose));
         return false;
