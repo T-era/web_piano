@@ -20,7 +20,7 @@ export class RecMode {
     record(row :number) {
         const levelsContinue = soundContext.getLevelsContine(this.scoreModel.musicSetting);
         levelsContinue.forEach(level => {
-            if (this.scoreModel.scoreItems[row][level].value !== ScoreItem.Start) {
+            if (this.scoreModel.scoreItems[row][level].scoreItem.value !== ScoreItem.Start) {
                 this.scoreModel.control.replaceScore(row, level, ScoreItem.Continue)
             }
         });

@@ -1,9 +1,10 @@
-import { levelAll, newScoreRow, ScoreItem, scoreSheetRowHeight } from "../../base";
+import { ScoreItem } from "../../base";
 import { WithListener } from "../../Listener";
 import { SoundContext } from "../../sound";
 import { MusicSetting } from "../MusicSetting";
-import { ScoreItemsCore, Event, ScoreItems } from "./ScoreItemsCore";
+import { ScoreItemsCore, Event, ScoreItems, Cell } from "./ScoreItemsCore";
 import { ScoreItemsControl } from "./ScoreItemsControl";
+import { ScoreItemsResizer } from "./ScoreItemsResizer";
 
 export class ScoreModel {
     private readonly _scoreItems :ScoreItemsCore = new ScoreItemsCore([]);
@@ -11,21 +12,24 @@ export class ScoreModel {
 
     private readonly _musicSetting :MusicSetting;
     private readonly soundContext :SoundContext;
-    private readonly sheetDiv :HTMLDivElement;
     private readonly _control :ScoreItemsControl;
+    private readonly _resizer :ScoreItemsResizer;
 
     constructor(musicSetting :MusicSetting, sheetDiv :HTMLDivElement, soundContext :SoundContext) {
         this._musicSetting = musicSetting;
-        this.sheetDiv = sheetDiv;
         this.soundContext = soundContext;
         this._scoreItems.appendNewRow();
         this._control = new ScoreItemsControl(this._scoreItems, this._selectedRow, sheetDiv);
+        this._resizer = new ScoreItemsResizer(this, this._scoreItems);
     }
     addNewRowListener(f :Event<void>) {
         this._scoreItems.addAppendRowListener(f);
     }
     addScoreItemListener(row:number, level:number, f :Event<ScoreItem>) {
         this._scoreItems.addScoreItemListenerAt(row, level, f);
+    }
+    addHighlightListener(row :number, level :number, f :Event<boolean>) {
+        this._scoreItems.addHighlightListenerAt(row, level, f);
     }
     addSelectedRowListener(f :Event<number>) {
         this._selectedRow.addListener(f);
@@ -47,8 +51,8 @@ export class ScoreModel {
      * 楽譜一行分の音を鳴らします。戻り値の関数をコールすれば音を止められます。
      */
     playARow(row :number) :()=>void {
-        const levels = this.scoreItems[row].map((scoreItem, level) => {
-            if (scoreItem.value == ScoreItem.None) return -1;
+        const levels = this.scoreItems[row].map((cell, level) => {
+            if (cell.scoreItem.value == ScoreItem.None) return -1;
             else return level
         }).filter((level_) => level_ !== -1);
         const stoppers = levels.map((level) => {
@@ -57,8 +61,11 @@ export class ScoreModel {
         })
         return ()=>stoppers.forEach(stopper=> stopper.stop());
     }
-    get control() {
+    get control() :ScoreItemsControl {
         return this._control;
+    }
+    get resizer() :ScoreItemsResizer {
+        return this._resizer;
     }
     get musicSetting() :MusicSetting {
         return this._musicSetting;
@@ -66,7 +73,7 @@ export class ScoreModel {
     get selectedRow() :number {
         return this._selectedRow.value;
     }
-    get scoreItems() :ReadonlyArray<ReadonlyArray<WithListener<ScoreItem>>> {
+    get scoreItems() :ReadonlyArray<ReadonlyArray<Cell>> {
         return this._scoreItems.ref;
     }
     get scoreItemCopy() :ScoreItems {

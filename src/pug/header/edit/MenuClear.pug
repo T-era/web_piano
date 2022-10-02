@@ -1,0 +1,17 @@
+include ../../constant_vars
+
+svg#menu_clear_all(xmlns=ns_svg viewBox=`0 0 200 200`)
+    defs
+        linearGradient#gradiation(x1=0 x2=0 y1=0 y2=1)
+            stop(offset="0%" stop-color="red" stop-opacity=0)
+            stop(offset="40%" stop-color="#a00" stop-opacity=1)
+            stop(offset="60%" stop-color="#a00" stop-opacity=1)
+            stop(offset="100%" stop-color="red" stop-opacity=0)
+    path(d="M40 30l-10 00,10-10,10 10,-10 0,0 140,10 0,-10 10,-10-10,10 0Z" fill="red" stroke="red" stroke-width=5)
+    rect(x=10 y=10 width=180 height=180 fill="url(#gradiation)")
+    text(x=100 y=80 font-size=20 text-anchor='middle' dominant-baseline='central' fill='white') CLEAR
+    text(x=100 y=110 font-size=40 text-anchor='middle' dominant-baseline='central' fill='white') ALL
+svg#menu_clear_line(xmlns=ns_svg viewBox=`0 0 200 200`)
+    rect(x=10 y=70 width=180 height=60 fill="#c00")
+    text(x=100 y=80 font-size=20 text-anchor='middle' dominant-baseline='central' fill='white') CLEAR
+    text(x=100 y=110 font-size=40 text-anchor='middle' dominant-baseline='central' fill='white') a ROW

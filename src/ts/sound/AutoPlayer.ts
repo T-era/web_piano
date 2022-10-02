@@ -2,6 +2,7 @@ import { ScoreItem } from "../base"
 import { ScoreItemsRef } from "../model/score";
 import { ScoreModel } from "../model/score";
 import { RecMode } from "../model/score/RecModeControl";
+import { Cell } from "../model/score/ScoreItemsCore";
 import { soundContext } from "./SoundContext";
 
 interface OptionPlay {
@@ -41,8 +42,12 @@ export class AutomationPlayer {
     private automationPlayAt(row :number) {
         const nextSound = soundFromScores(row, this.scoreItems);
         nextSound.forEach(aSound => {
+            aSound.cellRefs.forEach(cellRef => cellRef.highlighted.value = true);
             const stopper = soundContext.getPlayer(this.scoreModel.musicSetting, aSound.level).play();
-            setTimeout(() => stopper.stop(), aSound.length * this.beatSpeedMSec);
+            setTimeout(() => {
+                stopper.stop();
+                aSound.cellRefs.forEach(cellRef => cellRef.highlighted.value = false);
+            }, aSound.cellRefs.length * this.beatSpeedMSec);
         });
         if (this.recMode) {
             // 長音を記録する
@@ -61,29 +66,30 @@ export class AutomationPlayer {
 
 interface ASound {
     level :number;
-    length :number;
+    cellRefs :Cell[];
 }
 
 function soundFromScores(row :number, scoreItems :ScoreItemsRef) :ASound[] {
     const nextRow = scoreItems[row];
-    return nextRow.map((_, level) => {
-        return { level, length: lengthCount(level) }
-    }).filter(aSound => aSound.length > 0)
-    function lengthCount(level :number) :number {
-        if (scoreItems[row][level].value === ScoreItem.Start) {
-            return lengthContinue(1, level, row + 1);
+    return nextRow.map((cell, level) => {
+        return { level, cellRefs: findContinue(level) };
+    }).filter(aSound => aSound.cellRefs.length > 0)
+    function findContinue(level :number) :Cell[] {
+        const cell = scoreItems[row][level];
+        if (cell.scoreItem.value === ScoreItem.Start) {
+            return lengthContinue(level, row + 1, [cell]);
         } else {
-            return 0;
+            return [];
         }
     }
-    function lengthContinue(counter :number, level :number, row :number) :number {
+    function lengthContinue(level :number, row :number, temp :Cell[]) :Cell[] {
         if (scoreItems.length === row) {
-            return counter;
+            return temp;
         }
-        if (scoreItems[row][level].value === ScoreItem.Continue) {
-            return lengthContinue(counter + 1, level, row + 1);
+        if (scoreItems[row][level].scoreItem.value === ScoreItem.Continue) {
+            return lengthContinue(level, row + 1, temp.concat([scoreItems[row][level]]));
         } else {
-            return counter;
+            return temp;
         }
     }
 }

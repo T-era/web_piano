@@ -1,6 +1,6 @@
 import { levelAll, newScoreRow, ScoreItem, scoreSheetRowHeight } from "../../base";
 import { WithListener } from "../../Listener";
-import { ScoreItemsCore } from "./ScoreItemsCore";
+import { Cell, ScoreItemsCore } from "./ScoreItemsCore";
 
 /**
  * 楽譜譜面の操作を行います。
@@ -53,8 +53,8 @@ export class ScoreItemsControl {
             this.addNewRow();
         }
         const currentItems = this.scoreItems[currentRow];
-        currentItems.forEach((scoreItem, level) => {
-            if (scoreItem.value !== ScoreItem.None) {
+        currentItems.forEach((cell, level) => {
+            if (cell.scoreItem.value !== ScoreItem.None) {
                 this._scoreItems.setScoreItemAt(currentRow + 1, level, ScoreItem.Continue);
             }
         });
@@ -99,7 +99,7 @@ export class ScoreItemsControl {
     clearAll() {
         this.scoreItems.forEach((row, rowIndex) => {
             row.forEach((cell, cellIndex) => {
-                if (cell.value !== ScoreItem.None) {
+                if (cell.scoreItem.value !== ScoreItem.None) {
                     this._scoreItems.setScoreItemAt(rowIndex, cellIndex, ScoreItem.None);
                 }
             })
@@ -107,8 +107,8 @@ export class ScoreItemsControl {
     }
     clearLine() {
         const row = this.scoreItems[this.selectedRow];
-        row.forEach((scoreItem, index) => {
-            if (scoreItem.value !== ScoreItem.None) {
+        row.forEach((cell, index) => {
+            if (cell.scoreItem.value !== ScoreItem.None) {
                 this.replaceScore(this.selectedRow, index, ScoreItem.None);
             }
         });
@@ -135,7 +135,7 @@ export class ScoreItemsControl {
     get selectedRow() :number {
         return this._selectedRow.value;
     }
-    get scoreItems() :ReadonlyArray<ReadonlyArray<WithListener<ScoreItem>>> {
+    get scoreItems() :ReadonlyArray<ReadonlyArray<Cell>> {
         return this._scoreItems.ref;
     }
 

@@ -1,4 +1,4 @@
-import { ScoreModel } from "../../model/score";
+import { ScoreModel } from "../../../model/score";
 
 export function menuClearInit(scoreModel :ScoreModel) {
     const clearAll = document.getElementById('menu_clear_all')!;

@@ -65,6 +65,14 @@ export class ScoreSheetCell extends SvgG {
         scoreModel.addScoreItemListener(rowAt, levelAt, () => {
             this.reshow();
         })
+        scoreModel.addHighlightListener(rowAt, levelAt, (highlighted :boolean) => {
+            const rawRect = this.svgRect.elm;
+            if (highlighted) {
+                rawRect.classList.add('highlighted');
+            } else {
+                rawRect.classList.remove('highlighted');
+            }
+        })
         this.reshow();
     }
 

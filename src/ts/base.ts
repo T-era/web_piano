@@ -23,6 +23,11 @@ export enum ScoreItem {
     Continue,
     None,
 }
+export enum HighLighting {
+    ON,
+    OFF,
+    unknown,
+}
 
 export function newScoreRow() :ScoreItem[] {
     return levelAll.map(() => ScoreItem.None);

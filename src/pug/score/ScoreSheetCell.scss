@@ -4,6 +4,9 @@
     &.empty {
         fill: white;
     }
+    &.highlighted {
+        fill: #fe4;
+    }
 }
 .continuation_mark {
     stroke: blue;
